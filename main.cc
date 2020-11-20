@@ -27,7 +27,7 @@ ECAL *TheEcal= new ECAL(5,-7.125,7.125,5,-7.125,7.125);
 EMShower TheShower(gamma, myparam, TheEcal,bFixedLength,nPart,energy_in);
 TheShower.compute();    
 
-Double_t ww= 1;
+
     
 /*ECALProperties *ecalprop; 
 EMECALShowerParametrization *myParam = new EMECALShowerParametrization(ecalprop,{100.0,0.1},{1.0,0.1,100.0,1.0},1,1);
@@ -161,27 +161,32 @@ gPad->SetLogx();
     
 par->SaveAs("/Users/eugenia/desktop/EMCal/param.png");*/
     
-//TH2F* EcalGrid=TheEcal->CreateGrid(5,-7.125,7.125,5,-7.125,7.125);
+
+/*ECAL *TheEcal= new ECAL(5,-7.125,7.125,5,-7.125,7.125);   
+TH2F* EcalGrid=TheEcal->CreateGrid(5,-7.125,7.125,5,-7.125,7.125);
+    
+TheEcal->AddHitCoo(1,1,0,0,0.045,EcalGrid);
+TheEcal->AddHitCoo(0,1,0,0,0.045,EcalGrid);
+TheEcal->AddHitCoo(0,1,0,0,1,EcalGrid);
+TheEcal->AddHitCoo(0,1,0,0,95,EcalGrid);
+TheEcal->AddHitCoo(0,1,0,0,0.00004,EcalGrid);
     
 
-    
-/*TheEcal->AddHitCoo(4.5,2,ww,EcalGrid);
-TheEcal->Draw_ECAL(ww,EcalGrid);
-TheEcal.AddHitCoo(4,2,ww,EcalGrid);
-TheEcal.AddHitCoo(5,2.5,ww,EcalGrid);
-TheEcal.AddHitCoo(5,2,ww,EcalGrid);
+
+TheEcal->AddHitCoo(3,-1,0,0,9,EcalGrid);
+TheEcal->AddHitCoo(3,-1,0,0,0.34,EcalGrid);
 
     
-TheEcal->Draw_ECAL(ww,EcalGrid);
-TheEcal.GiveNcell(1,1,EcalGrid);
+TheEcal->Draw_ECAL(EcalGrid);*/
+//TheEcal.GiveNcell(1,1,EcalGrid);
 
     
     
-TCanvas * a= new TCanvas("a","a",1000,100,2500,2000); 
+/*TCanvas * a= new TCanvas("a","a",1000,100,2500,2000); 
 MyIncompleteGamma->Draw("L");
-a->SaveAs("/Users/eugenia/desktop/EMCal/a.png");*/
+a->SaveAs("/Users/eugenia/desktop/EMCal/a.png");
     
-/*IncGamma gamma;
+/IncGamma gamma;
 TF1* MyIncompleteGamma=gamma.MyGamma();
 gamma.Set_a(0.5,MyIncompleteGamma);
 double result=MyIncompleteGamma->Eval(0.4);

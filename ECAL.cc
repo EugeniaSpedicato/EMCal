@@ -35,7 +35,7 @@ ECAL::ECAL(double nbinsx,
 // metodo che crea l'istogramma rappresentante il calorimetro
 TH2F* ECAL::CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double ylow,double yup)
 {
-    TH2F* EcalGrid = new TH2F("EcalGrid" , "EM Calorimeter",nbinsx,xlow,xup,nbinsy,ylow,yup);
+    TH2F* EcalGrid = new TH2F("EcalGrid" , "EM Calorimeter with E in GeV",nbinsx,xlow,xup,nbinsy,ylow,yup);
     return EcalGrid;
 };
 
@@ -63,19 +63,25 @@ void ECAL::AddHitCoo(double r, double phi,double xi, double yi, double w, TH2F* 
 {   r *= 2.19;
     double x=r*cos(phi)+xi; // coo x
     double y=r*sin(phi)+yi; // coo y
-    a->Fill(x,y,w);
+    a->Fill(x,y,w);    
 };
 
 //void ECAL::GiveCellEn(espote,TH2F* a){}
 
 // metodo che disegna l'evento nel calorimetro e le celle che vengono colpite
-void ECAL::Draw_ECAL(double w,TH2F* a){
+void ECAL::Draw_ECAL(TH2F* a){
 
-TCanvas * Ecal_= new TCanvas("Ecal_","Ecal_",1000,100,2500,2000); 
+TCanvas * Ecal_= new TCanvas("Ecal_","Ecal_",1500,100,3500,2000);
+Ecal_->Divide(2,1);
+Ecal_->cd(1);
 gStyle->SetPalette(kAquamarine);
 //TColor::InvertPalette();
+a->SetXTitle("x (cm)");
+a->SetYTitle("y (cm)");
 a->Draw("COL");
 a->Draw("TEXT SAME");
+Ecal_->cd(2);
+a->Draw("LEGO");
 Ecal_->SaveAs("/Users/eugenia/desktop/EMCal/Ecal.png");
 
 };

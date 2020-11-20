@@ -462,7 +462,7 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
               double y=coocart[0][1];*/
               
               // theGrid->AddHitCoo(ri,phi,xi,yi,1,EcalGrid);
-              theGrid->AddHitCoo(ri,phi,0.,0.,1,EcalGrid);
+              theGrid->AddHitCoo(ri,phi,0,0,spote,EcalGrid);
               
             Etot[i] += spote;
             //Etot_step[iStep][i] += spote;
@@ -562,8 +562,8 @@ EnRad_20->Scale(1/c20);
           EnRad5->SetPoint(3,3.5,spotE4[4]/Etot_step[4]);*/
       
     
-theGrid->Draw_ECAL(1,EcalGrid);
-TCanvas * en_lat= new TCanvas("en_lat","en_lat",1000,100,2500,2000); 
+theGrid->Draw_ECAL(EcalGrid);
+TCanvas * en_lat= new TCanvas("en_lat","en_lat",1500,1000,3500,2000); 
 /*en_lat->Divide(1,1);
 en_lat->cd(1);
 EnLat->SetMarkerColor(kRed);
@@ -572,21 +572,29 @@ EnLat->Draw("ACP*");
 en_lat->cd(2);*/
 en_lat->Divide(2,3);
 en_lat->cd(1);
+EnRad_3->SetYTitle("dE(t,r)/dE(t) (%)");
+EnRad_3->SetXTitle("r (RM)");
 EnRad_3->SetMarkerColor(kBlue);
 EnRad_3->SetMarkerStyle(20);
 EnRad_3->Draw();
 gPad->SetLogy();
 en_lat->cd(2);
+EnRad_6->SetYTitle("dE(t,r)/dE(t) (%)");
+EnRad_6->SetXTitle("r (RM)");
 EnRad_6->SetMarkerColor(kRed);
 EnRad_6->SetMarkerStyle(20);
 EnRad_6->Draw();
 gPad->SetLogy();
 en_lat->cd(3);
+EnRad_13->SetYTitle("dE(t,r)/dE(t) (%)");
+EnRad_13->SetXTitle("r (RM)");
 EnRad_13->SetMarkerColor(kBlack);
 EnRad_13->SetMarkerStyle(20);
 EnRad_13->Draw();
 gPad->SetLogy();
 en_lat->cd(4);
+EnRad_20->SetYTitle("dE(t,r)/dE(t) (%)");
+EnRad_20->SetXTitle("r (RM)");
 EnRad_20->SetMarkerColor(kOrange);
 EnRad_20->SetMarkerStyle(20);
 EnRad_20->Draw();

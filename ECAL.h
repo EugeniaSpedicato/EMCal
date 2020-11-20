@@ -32,7 +32,7 @@ ECAL(double nbinsx,
 
 TH2F* CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double ylow,double yup);
 void AddHitCoo(double r,double phi,double xi,double yi,double w,TH2F* a);
-void Draw_ECAL(double w,TH2F* a);
+void Draw_ECAL(TH2F* a);
 void GiveNcell(double coox,double cooy,TH2F* a);
 inline void setSpotEnergy(double e) { spotEnergy = e; }
 
