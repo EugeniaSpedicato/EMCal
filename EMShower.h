@@ -110,15 +110,7 @@ private:
 
   double totalEnergy;
 
-/*std::vector<double> spotE1;
-std::vector<double> spotE2;
-std::vector<double> spotE3;
-std::vector<double> spotE4;*/
-std::vector<TH1F*> EnRad_;
-TH1F* EnRad_3;
-TH1F* EnRad_6;
-TH1F* EnRad_13;
-TH1F* EnRad_20;
+
     
     
 

@@ -204,22 +204,6 @@ void EMShower::prepareSteps() {
        cout << " energia depositata allo step " << iStep << " è " << realTotalEnergy << " GeV"<< endl;
 
    Etot_step.push_back(0.);  
-   /*spotE1.push_back(0.);  
-   spotE2.push_back(0.);   
-   spotE3.push_back(0.);   
-   spotE4.push_back(0.);   */
-    
-    /*TGraph* EnRad1 = new TGraph(4);
-    TGraph* EnRad2 = new TGraph(4);
-    TGraph* EnRad3 = new TGraph(4);
-    TGraph* EnRad4 = new TGraph(4);
-    TGraph* EnRad5 = new TGraph(4);
-   EnRad_.push_back( EnRad1 );
-   EnRad_.push_back( EnRad2 );
-   EnRad_.push_back( EnRad3 );
-   EnRad_.push_back( EnRad4 );
-   EnRad_.push_back( EnRad5 );*/
-      
       
   }
 
@@ -233,7 +217,7 @@ void EMShower::prepareSteps() {
 }
 
 void EMShower::compute() {
-//TH1::SetDefaultSumw2();
+
   double t = 0.;
   double dt = 0.;
   if (!stepsCalculated)
@@ -241,18 +225,6 @@ void EMShower::compute() {
   // Prepare the grids in Ecal
   bool status = false;
 
-    TGraph* EnLat = new TGraph(nSteps);
-    /*TGraph* EnRad1 = new TGraph(4);
-    TGraph* EnRad2 = new TGraph(4);
-    TGraph* EnRad3 = new TGraph(4);
-    TGraph* EnRad4 = new TGraph(4);
-    TGraph* EnRad5 = new TGraph(4);*/
-     
-    EnRad_3 = new TH1F("RPS3", "Radial Profile Step 3", 60, 0, 6);
-    EnRad_6 = new TH1F("RPS6", "Radial Profile Step 6", 60, 0, 6);
-    EnRad_13 = new TH1F("RPS13", "Radial Profile Step 13", 60, 0, 6);
-    EnRad_20 = new TH1F("RPS20", "Radial Profile Step 20", 60, 0, 6);
-    
     TGraph* nSpot_histo = new TGraph();
     
     cout << "Step preparati" << endl;
@@ -340,7 +312,7 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
 
       // The number of energy spots (or mips)
       double nS = 0;
-        //EnLat->SetPoint(iStep,t,dE);
+        
 
       // ECAL case : Account for photostatistics and long'al non-uniformity
 
@@ -452,63 +424,30 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
                 theGrid->addHitDepth(ri, phi, depth);
                 //			   std::cout << " Done " << std::endl;
               } else */
-              
-              /*TMatrixD coopol(1,1);
-              coopol=theGrid->addHit(ri, phi);
-              
-              TMatrixD coocart(1,1);
-              coocart=theGrid->Conversion(coopol);
-              double x=coocart[0][0];
-              double y=coocart[0][1];*/
+  
               
               // theGrid->AddHitCoo(ri,phi,xi,yi,1,EcalGrid);
-              theGrid->AddHitCoo(ri,phi,0,0,spote,EcalGrid);
+              theGrid->AddHitCoo(ri,phi,-7,7,spote,EcalGrid);
               
             Etot[i] += spote;
             //Etot_step[iStep][i] += spote;
             Etot_step[iStep] += spote;
               
-              
-              if (iStep==2)
-              {
-                EnRad_3->Fill(ri,spote);
-              }
-              
-             if (iStep==5)
-              {
-                EnRad_6->Fill(ri,spote);
-              }
-              
-              if (iStep==12)
-              {
-                EnRad_13->Fill(ri,spote);
-              }
-              
-              if (iStep==15)
-              {
-                EnRad_20->Fill(ri,spote);
-              }
+             
+theGrid->Fill_(ri,spote,iStep);             
 
-            
-    
-                /*if (ri<1) spotE1[iStep] += spote;
-                if (ri<2 && ri>1) spotE2[iStep] += spote;
-                if (ri<3 && ri>2) spotE3[iStep] += spote;
-                if (ri<4 && ri>3) spotE4[iStep] += spote;*/
-            
+              
           }
         }
       }
         cout << " energia totale " << Etot[i]  << endl;
     }
-     
+    
       
-     EnLat->SetPoint(iStep,tt,Etot_step[iStep]/totalEnergy);
-  //cout << "-------> fine step numero " <<  iStep << " con Etot_step = " << Etotal_step[iStep] << endl;
-
       
   cout << "-------> fine step numero " <<  iStep << " con Etotal_step = " << Etot_step[iStep] << " e con con Etot_step = " << Etot_step[iStep] << endl;
    
+      theGrid->Fill_Lat(tt,Etot_step[iStep]);
 
 
   }
@@ -531,14 +470,6 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
           
       }    */
       
-double c3=EnRad_3->Integral();
-EnRad_3->Scale(1/c3);
-double c6=EnRad_6->Integral();
-EnRad_6->Scale(1/c6);
-double c13=EnRad_13->Integral();
-EnRad_13->Scale(1/c13);
-double c20=EnRad_20->Integral();
-EnRad_20->Scale(1/c20);
     
               /*EnRad1->SetPoint(0,0.5,spotE1[0]/Etot_step[0]);
           EnRad1->SetPoint(1,1.5,spotE2[0]/Etot_step[0]);
@@ -563,66 +494,9 @@ EnRad_20->Scale(1/c20);
       
     
 theGrid->Draw_ECAL(EcalGrid);
-TCanvas * en_lat= new TCanvas("en_lat","en_lat",1500,1000,3500,2000); 
-/*en_lat->Divide(1,1);
-en_lat->cd(1);
-EnLat->SetMarkerColor(kRed);
-EnLat->SetMarkerSize(5);
-EnLat->Draw("ACP*");
-en_lat->cd(2);*/
-en_lat->Divide(2,3);
-en_lat->cd(1);
-EnRad_3->SetYTitle("dE(t,r)/dE(t) (%)");
-EnRad_3->SetXTitle("r (RM)");
-EnRad_3->SetMarkerColor(kBlue);
-EnRad_3->SetMarkerStyle(20);
-EnRad_3->Draw();
-gPad->SetLogy();
-en_lat->cd(2);
-EnRad_6->SetYTitle("dE(t,r)/dE(t) (%)");
-EnRad_6->SetXTitle("r (RM)");
-EnRad_6->SetMarkerColor(kRed);
-EnRad_6->SetMarkerStyle(20);
-EnRad_6->Draw();
-gPad->SetLogy();
-en_lat->cd(3);
-EnRad_13->SetYTitle("dE(t,r)/dE(t) (%)");
-EnRad_13->SetXTitle("r (RM)");
-EnRad_13->SetMarkerColor(kBlack);
-EnRad_13->SetMarkerStyle(20);
-EnRad_13->Draw();
-gPad->SetLogy();
-en_lat->cd(4);
-EnRad_20->SetYTitle("dE(t,r)/dE(t) (%)");
-EnRad_20->SetXTitle("r (RM)");
-EnRad_20->SetMarkerColor(kOrange);
-EnRad_20->SetMarkerStyle(20);
-EnRad_20->Draw();
-gPad->SetLogy();
-en_lat->cd(5);
-EnRad_3->SetMarkerColor(kBlue);
-EnRad_3->SetMarkerStyle(20);
-EnRad_3->Draw();
-EnRad_20->SetMarkerColor(kOrange);
-EnRad_20->SetMarkerStyle(20);
-EnRad_20->Draw("L same");
-EnRad_6->SetMarkerColor(kRed);
-EnRad_6->SetMarkerStyle(20);
-EnRad_6->Draw("L same");
-EnRad_13->SetMarkerColor(kBlack);
-EnRad_13->SetMarkerStyle(20);
-EnRad_13->Draw("L same");
-gPad->SetLogy();
-//nSpot_histo->Draw("ACP*");
-
-en_lat->SaveAs("/Users/eugenia/desktop/EMCal/enrad.png");
 
     
-TCanvas * en_= new TCanvas("en_lat","en_lat",1000,100,2500,2000); 
-EnLat->SetMarkerColor(kRed);
-EnLat->SetMarkerSize(5);
-EnLat->Draw("ACP*");
-en_->SaveAs("/Users/eugenia/desktop/EMCal/enlat.png");
+
 }
 
 double EMShower::gam(double x, double a) const {
