@@ -47,24 +47,6 @@ TH2F* ECAL::CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double
     return EcalGrid;
 };
 
-// metodo che registra il punto di coo(r,phi)
-/*TMatrixD ECAL::addHit(double r, double phi)
-{
-    TMatrixD a(1,2);
-    a[0][0]=r;
-    a[0][1]=phi;
-        
-        return a;};
-
-
-TMatrixD ECAL::Conversion(TMatrixD c){
-    TMatrixD ccart(1,1);
-    ccart[0][0]=c[0][0]*cos(c[0][1]); // coo x
-    ccart[0][1]=c[0][0]*sin(c[0][1]); // coo y
-    
-    return ccart;
-};
-*/
 
 // metodo che aggiunge il punto di coo(x,y) all'istogramma, quindi al calorimetro
 void ECAL::AddHitCoo(double r, double phi,double xi, double yi, double w, TH2F* a)
@@ -74,7 +56,6 @@ void ECAL::AddHitCoo(double r, double phi,double xi, double yi, double w, TH2F* 
     a->Fill(x,y,w);    
 };
 
-//void ECAL::GiveCellEn(espote,TH2F* a){}
 
 // metodo che disegna l'evento nel calorimetro e le celle che vengono colpite
 void ECAL::Draw_ECAL(TH2F* a){
@@ -94,7 +75,20 @@ Ecal_->SaveAs("/Users/eugenia/desktop/EMCal/Ecal.png");
 
 };
 
-void ECAL::Fill_(double ri, double spote, double iStep,double realTotalEnergy12,double realTotalEnergy56,double realTotalEnergy1314,double realTotalEnergy2223)
+void ECAL::Fill_(vector<pair<double,double>> &Spot1,vector<pair<double,double>> &Spot2,vector<pair<double,double>> &Spot3,vector<pair<double,double>> &Spot4,double realTotalEnergy12,double realTotalEnergy56,double realTotalEnergy1314,double realTotalEnergy2223)
+{
+    for (int i=0; i< Spot1.size(); ++i)
+    {EnRad_3->Fill(Spot1[i].first,Spot1[i].second/realTotalEnergy12);}     
+    for (int i=0; i< Spot2.size(); ++i)
+    {EnRad_6->Fill(Spot2[i].first,Spot2[i].second/realTotalEnergy56);}
+    for (int i=0; i< Spot3.size(); ++i)
+    {EnRad_13->Fill(Spot3[i].first,Spot3[i].second/realTotalEnergy1314);}
+    for (int i=0; i< Spot4.size(); ++i)
+    {EnRad_20->Fill(Spot4[i].first,Spot4[i].second/realTotalEnergy2223); }         
+}
+    
+
+/*void ECAL::Fill_(double ri, double spote, double iStep,double realTotalEnergy12,double realTotalEnergy56,double realTotalEnergy1314,double realTotalEnergy2223)
 {
              if (iStep==0 || iStep==1 )
               {
@@ -114,30 +108,8 @@ void ECAL::Fill_(double ri, double spote, double iStep,double realTotalEnergy12,
               if (iStep==21 || iStep==22)
               {
                 EnRad_20->Fill(ri,spote/realTotalEnergy2223);
-              }
-    
-    /*       if (iStep==2)
-              {
-                EnRad_3->Fill(ri,spote);
-              }
-              
-             if (iStep==5)
-              {
-                EnRad_6->Fill(ri,spote);
-              }
-              
-              if (iStep==12)
-              {
-                EnRad_13->Fill(ri,spote);
-              }
-              
-              if (iStep==15)
-              {
-                EnRad_20->Fill(ri,spote);
-              }*/
-                
-                
-}
+              }                
+}*/
 
 void ECAL::Fill_Lat(double tt, double stepEn)
 {
@@ -160,10 +132,10 @@ EnRad_3->Scale(1/0.2);
 EnRad_6->Scale(1/0.2);
 EnRad_13->Scale(1/0.2);
 EnRad_20->Scale(1/0.2);
-/*EnRad_3->Scale(1/20);
-EnRad_6->Scale(1/20);
-EnRad_13->Scale(1/20);
-EnRad_20->Scale(1/20);*/
+EnRad_3->Scale(1/100);
+EnRad_6->Scale(1/100);
+EnRad_13->Scale(1/100);
+EnRad_20->Scale(1/100);
     
 double c4=EnLong->Integral();
 EnLong->Scale(1/c4);

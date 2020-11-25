@@ -233,27 +233,10 @@ void EMShower::compute() {
   // Loop over all segments for the longitudinal development
   double totECalc = 0;
     
-    double realTotalEnergy12=0.;
-    double realTotalEnergy56=0.;
-    double realTotalEnergy1314=0.;
-    double realTotalEnergy2223=0.;
-        
-    for (int i = 0; i < nPart; ++i) {
-      realTotalEnergy12 += (depositedEnergy[0][i] * E[i]+depositedEnergy[1][i] * E[i]);
-      
-      realTotalEnergy56 += (depositedEnergy[4][i] * E[i]+depositedEnergy[5][i] * E[i]);
-      
-      realTotalEnergy1314 += (depositedEnergy[12][i] * E[i]+depositedEnergy[13][i] * E[i]);
-        
-      realTotalEnergy2223 += (depositedEnergy[21][i] * E[i]+depositedEnergy[22][i] * E[i]);
-        
-    }
-    
-    cout << " en 1 2 " << realTotalEnergy12 <<endl;
-    cout << " en 5 6 " << realTotalEnergy56 <<endl;
-    cout << " en 13 14 " << realTotalEnergy1314 <<endl;
-    cout << " en 22 23 " << realTotalEnergy2223 <<endl;
-    
+    realTotalEnergy12=0.;
+    realTotalEnergy56=0.;
+    realTotalEnergy1314=0.;
+    realTotalEnergy2223=0.;            
     
     
   for (unsigned iStep = 0; iStep < nSteps; ++iStep) {
@@ -462,9 +445,22 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
                 
              cout <<"prova------>"<< prova << "e anche " << realTotalEnergy << endl;*/
               
+              
                 
-              theGrid->Fill_(ri,spote,iStep,realTotalEnergy12,realTotalEnergy56,realTotalEnergy1314,realTotalEnergy2223);             
-
+             if (iStep==0 || iStep==1 )
+              { Spot_R12.push_back(make_pair(ri, spote));}
+              
+             if (iStep==4 || iStep==5)
+              {Spot_R56.push_back(make_pair(ri, spote));}
+              
+              if (iStep==12 || iStep==13)
+              {Spot_R1314.push_back(make_pair(ri, spote));}
+              
+              if (iStep==21 || iStep==22)
+              {Spot_R2223.push_back(make_pair(ri, spote));}
+        
+              
+              /*theGrid->Fill_(ri,spote,iStep,realTotalEnergy12,realTotalEnergy56,realTotalEnergy1314,realTotalEnergy2223);     */        
               
           }
         }
@@ -472,7 +468,7 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
         cout << " energia totale " << Etot[i]  << endl;
     }
     
-      
+
       
   cout << "-------> fine step numero " <<  iStep << " con Etotal_step = " << Etot_step[iStep] << " e con con Etot_step = " << Etot_step[iStep] << endl;
    
@@ -480,47 +476,19 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
 
 
   }
+    realTotalEnergy12 = (Etot_step[0]+Etot_step[1]);
+    realTotalEnergy56 = (Etot_step[4]+Etot_step[5]);
+    realTotalEnergy1314 = (Etot_step[12]+Etot_step[13]);
+    realTotalEnergy2223 = (Etot_step[21]+Etot_step[22]);
 
+theGrid->Fill_(Spot_R12,Spot_R56,Spot_R1314,Spot_R2223,realTotalEnergy12,realTotalEnergy56,realTotalEnergy1314,realTotalEnergy2223);
+        
   double Etotal = 0.;
     
   for ( int i = 0; i < nPart; ++i) {
     //      myHistos->fill("h10",Etot[i]);
     Etotal += Etot[i];
-
-  }
-
-    /*for (int iStep=0; iStep<nSteps; ++iStep)
-      {cout << "qui" <<endl;
-          EnRad[iStep].SetPoint(0,0.5,spotE1[iStep]/Etot_step[iStep]);
-          EnRad[iStep].SetPoint(1,1.5,spotE2[iStep]/Etot_step[iStep]);
-          EnRad[iStep].SetPoint(2,2.5,spotE3[iStep]/Etot_step[iStep]);
-          EnRad[iStep].SetPoint(3,3.5,spotE4[iStep]/Etot_step[iStep]);
-      cout << "qui" <<endl;
-          
-      }    */
-      
-    
-              /*EnRad1->SetPoint(0,0.5,spotE1[0]/Etot_step[0]);
-          EnRad1->SetPoint(1,1.5,spotE2[0]/Etot_step[0]);
-          EnRad1->SetPoint(2,2.5,spotE3[0]/Etot_step[0]);
-          EnRad1->SetPoint(3,3.5,spotE4[0]/Etot_step[0]);
-              EnRad2->SetPoint(0,0.5,spotE1[1]/Etot_step[1]);
-          EnRad2->SetPoint(1,1.5,spotE2[1]/Etot_step[1]);
-          EnRad2->SetPoint(2,2.5,spotE3[1]/Etot_step[1]);
-          EnRad2->SetPoint(3,3.5,spotE4[1]/Etot_step[1]);
-              EnRad3->SetPoint(0,0.5,spotE1[2]/Etot_step[2]);
-          EnRad3->SetPoint(1,1.5,spotE2[2]/Etot_step[2]);
-          EnRad3->SetPoint(2,2.5,spotE3[2]/Etot_step[2]);
-          EnRad3->SetPoint(3,3.5,spotE4[2]/Etot_step[2]);
-              EnRad4->SetPoint(0,0.5,spotE1[3]/Etot_step[3]);
-          EnRad4->SetPoint(1,1.5,spotE2[3]/Etot_step[3]);
-          EnRad4->SetPoint(2,2.5,spotE3[3]/Etot_step[3]);
-          EnRad4->SetPoint(3,3.5,spotE4[3]/Etot_step[3]);
-            EnRad5->SetPoint(0,0.5,spotE1[4]/Etot_step[4]);
-          EnRad5->SetPoint(1,1.5,spotE2[4]/Etot_step[4]);
-          EnRad5->SetPoint(2,2.5,spotE3[4]/Etot_step[4]);
-          EnRad5->SetPoint(3,3.5,spotE4[4]/Etot_step[4]);*/
-      
+}      
     
 theGrid->Draw_ECAL(EcalGrid);
 

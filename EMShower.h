@@ -83,6 +83,15 @@ private:
     
 
   // The basic quantities for the shower development.
+  std::vector<pair<double,double>> Spot_R12;
+  std::vector<pair<double,double>> Spot_R56;
+  std::vector<pair<double,double>> Spot_R1314;
+  std::vector<pair<double,double>> Spot_R2223;
+double realTotalEnergy12;
+double realTotalEnergy56;
+double realTotalEnergy1314;
+double realTotalEnergy2223;
+    
   std::vector<double> theNumberOfSpots;
   std::vector<double> Etot;
   //std::vector<std::vector<double> > Etot_step;
