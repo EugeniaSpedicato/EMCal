@@ -41,7 +41,8 @@ EMShower::EMShower(//const TRandom3* engine,
  
 
 
-double fotos = theECAL->photoStatistics() * theECAL->lightCollectionEfficiency();
+//--->double fotos = theECAL->photoStatistics() * theECAL->lightCollectionEfficiency();
+double fotos = 50.E3 * 0.03;
 
   //nPart = thePart->size();
   totalEnergy = 0.;
@@ -231,7 +232,30 @@ void EMShower::compute() {
     
   // Loop over all segments for the longitudinal development
   double totECalc = 0;
-
+    
+    double realTotalEnergy12=0.;
+    double realTotalEnergy56=0.;
+    double realTotalEnergy1314=0.;
+    double realTotalEnergy2223=0.;
+        
+    for (int i = 0; i < nPart; ++i) {
+      realTotalEnergy12 += (depositedEnergy[0][i] * E[i]+depositedEnergy[1][i] * E[i]);
+      
+      realTotalEnergy56 += (depositedEnergy[4][i] * E[i]+depositedEnergy[5][i] * E[i]);
+      
+      realTotalEnergy1314 += (depositedEnergy[12][i] * E[i]+depositedEnergy[13][i] * E[i]);
+        
+      realTotalEnergy2223 += (depositedEnergy[21][i] * E[i]+depositedEnergy[22][i] * E[i]);
+        
+    }
+    
+    cout << " en 1 2 " << realTotalEnergy12 <<endl;
+    cout << " en 5 6 " << realTotalEnergy56 <<endl;
+    cout << " en 13 14 " << realTotalEnergy1314 <<endl;
+    cout << " en 22 23 " << realTotalEnergy2223 <<endl;
+    
+    
+    
   for (unsigned iStep = 0; iStep < nSteps; ++iStep) {
     // The length of the shower in this segment
       
@@ -254,6 +278,7 @@ void EMShower::compute() {
     }
     cout << "Allo step " << iStep << " in tt = " << tt << " (metà step) ho E = " << realTotalEnergy << endl;
    
+      
 
     // If the amount of energy is greater than 1 MeV, make a new grid
     // otherwise put in the previous one.
@@ -317,9 +342,9 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
       // ECAL case : Account for photostatistics and long'al non-uniformity
 
        //------>PER ADESSO!!!!!!!! 
-        /*dE = gRandom->Poisson(dE * photos[i]) / photos[i];
+        dE = gRandom->Poisson(dE * photos[i]) / photos[i];
         double z0 = gRandom->Gaus(0., 1.);
-        dE *= 1. + z0 * 0.003;*/
+        dE *= 1. + z0 * 0.003;
             //theECAL->lightCollectionUniformity();
         
         cout << "che dopo aver aggiunto le fluttuazioni diventa " << dE << endl;
@@ -427,14 +452,18 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
   
               
               // theGrid->AddHitCoo(ri,phi,xi,yi,1,EcalGrid);
-              theGrid->AddHitCoo(ri,phi,-7,7,spote,EcalGrid);
+              theGrid->AddHitCoo(ri,phi,0,0,spote,EcalGrid);
               
             Etot[i] += spote;
             //Etot_step[iStep][i] += spote;
             Etot_step[iStep] += spote;
+            
+             /* double prova=spote/(realTotalEnergy);
+                
+             cout <<"prova------>"<< prova << "e anche " << realTotalEnergy << endl;*/
               
-             
-theGrid->Fill_(ri,spote,iStep);             
+                
+              theGrid->Fill_(ri,spote,iStep,realTotalEnergy12,realTotalEnergy56,realTotalEnergy1314,realTotalEnergy2223);             
 
               
           }
@@ -447,7 +476,7 @@ theGrid->Fill_(ri,spote,iStep);
       
   cout << "-------> fine step numero " <<  iStep << " con Etotal_step = " << Etot_step[iStep] << " e con con Etot_step = " << Etot_step[iStep] << endl;
    
-      theGrid->Fill_Lat(tt,Etot_step[iStep]);
+      theGrid->Fill_Lat(tt, Etot_step[iStep]);
 
 
   }

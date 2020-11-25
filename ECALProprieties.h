@@ -14,7 +14,7 @@
 
 class ECALProperties : public CalorimeterProperties {
 public:
-  ECALProperties() : scaleEnergy_(0.0212),Aeff_(170.87),Zeff_(68.36),rho_(8.280),moliereRadius_(2.190),criticalEnergy_(9.64E-3),interactionLength_(20.27),resE_(1),lightColl_(0.03),photoStatistics_(50.E3),lightCollUnif_(0.003) {}
+  ECALProperties() : scaleEnergy_(0.0212),Aeff_(170.87),Zeff_(68.36),rho_(8.280),moliereRadius_(2.190),criticalEnergy_(8.74E-3),interactionLength_(20.27),resE_(1),lightColl_(0.03),photoStatistics_(50.E3),lightCollUnif_(0.003) {}
 
   ~ECALProperties() override {}
 

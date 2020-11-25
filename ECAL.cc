@@ -94,26 +94,26 @@ Ecal_->SaveAs("/Users/eugenia/desktop/EMCal/Ecal.png");
 
 };
 
-void ECAL::Fill_(double ri, double spote, double iStep)
+void ECAL::Fill_(double ri, double spote, double iStep,double realTotalEnergy12,double realTotalEnergy56,double realTotalEnergy1314,double realTotalEnergy2223)
 {
-             if (iStep==1 || iStep==2 )
+             if (iStep==0 || iStep==1 )
               {
-                EnRad_3->Fill(ri,spote);
+                EnRad_3->Fill(ri,spote/realTotalEnergy12);
               }
               
              if (iStep==4 || iStep==5)
               {
-                EnRad_6->Fill(ri,spote);
+                EnRad_6->Fill(ri,spote/realTotalEnergy56);
               }
               
               if (iStep==12 || iStep==13)
               {
-                EnRad_13->Fill(ri,spote);
+                EnRad_13->Fill(ri,spote/realTotalEnergy1314);
               }
               
-              if (iStep==17 || iStep==18)
+              if (iStep==21 || iStep==22)
               {
-                EnRad_20->Fill(ri,spote);
+                EnRad_20->Fill(ri,spote/realTotalEnergy2223);
               }
     
     /*       if (iStep==2)
@@ -146,20 +146,24 @@ void ECAL::Fill_Lat(double tt, double stepEn)
 
 void ECAL::Print_()
 {
-double c3=EnRad_3->Integral();
+/*double c3=EnRad_3->Integral();
 EnRad_3->Scale(1/c3);
 double c6=EnRad_6->Integral();
 EnRad_6->Scale(1/c6);
 double c13=EnRad_13->Integral();
 EnRad_13->Scale(1/c13);
 double c20=EnRad_20->Integral();
-EnRad_20->Scale(1/c20);
+EnRad_20->Scale(1/c20);*/
 
 // because of 1/dr in the histo article
 EnRad_3->Scale(1/0.2);
 EnRad_6->Scale(1/0.2);
 EnRad_13->Scale(1/0.2);
-EnRad_20->Scale(1/0.2); 
+EnRad_20->Scale(1/0.2);
+/*EnRad_3->Scale(1/20);
+EnRad_6->Scale(1/20);
+EnRad_13->Scale(1/20);
+EnRad_20->Scale(1/20);*/
     
 double c4=EnLong->Integral();
 EnLong->Scale(1/c4);
@@ -248,7 +252,7 @@ en_tot->SaveAs("/Users/eugenia/desktop/EMCal/profRad.png");
 TCanvas * en_tot2= new TCanvas("en_to2","Profile Long",1000,100,2500,2000); 
 EnLong->SetMaximum(0.15);
 EnLong->SetMinimum(0);
-EnLong->SetYTitle("E^-1 dE(t)/t (X0^-1)");
+EnLong->SetYTitle("E^-1 dE(t)/dt (X0^-1)");
 EnLong->SetXTitle("t (X0)");
 EnLong->SetTitle("Average Longitudinal Profile");
 EnLong->SetMarkerColor(8);

@@ -33,7 +33,7 @@ ECAL(double nbinsx,
 TH2F* CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double ylow,double yup);
 void AddHitCoo(double r,double phi,double xi,double yi,double w,TH2F* a);
 void Draw_ECAL(TH2F* a);
-void Fill_(double ri, double spote,double iStep);
+void Fill_(double ri, double spote,double iStep,double E1,double E2, double E3, double E4);
 void Fill_Lat(double tt, double stepEn);
 void Print_();
 void GiveNcell(double coox,double cooy,TH2F* a);
