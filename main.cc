@@ -24,9 +24,12 @@ ECALProperties *ecalprop;
 EMECALShowerParametrization *myparam = new EMECALShowerParametrization(ecalprop,{100.0,0.1},{1.0,0.1,100.0,1.0},1,1);
 ECAL *TheEcal= new ECAL(5,-7.125,7.125,5,-7.125,7.125);   
     
-EMShower TheShower(gamma, myparam, TheEcal,bFixedLength,nPart,energy_in);
     
-for (int i=0;i<100;++i) {TheShower.compute();} 
+for (int i=0;i<100;++i) 
+{
+    EMShower TheShower(gamma, myparam, TheEcal,bFixedLength,nPart,energy_in);
+    TheShower.compute();
+} 
     
 
 TheEcal->Print_();

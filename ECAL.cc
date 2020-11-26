@@ -132,10 +132,10 @@ EnRad_3->Scale(1/0.2);
 EnRad_6->Scale(1/0.2);
 EnRad_13->Scale(1/0.2);
 EnRad_20->Scale(1/0.2);
-EnRad_3->Scale(1/100);
+/*EnRad_3->Scale(1/100);
 EnRad_6->Scale(1/100);
 EnRad_13->Scale(1/100);
-EnRad_20->Scale(1/100);
+EnRad_20->Scale(1/100);*/
     
 double c4=EnLong->Integral();
 EnLong->Scale(1/c4);

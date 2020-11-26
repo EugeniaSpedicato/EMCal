@@ -3,6 +3,8 @@
 
 #include <TH2F.h>
 #include <TF1.h>
+#include <TProfile.h>
+
 
 #include <cmath>
 #include <map>
