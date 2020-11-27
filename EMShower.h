@@ -133,6 +133,11 @@ double realTotalEnergy2223;
   TH2F* EcalGrid;
 
   // Histos
+    TH1F* Rad1;
+    TH1F* Rad2;
+    TH1F* Rad3;
+    TH1F* Rad4;
+    
 
   //  Histos* myHistos;
   IncGamma myIncompleteGamma;

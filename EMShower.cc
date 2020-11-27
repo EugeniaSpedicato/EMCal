@@ -115,6 +115,11 @@ double fotos = 50.E3 * 0.03;
   globalMaximum /= totalEnergy;
   meanDepth /= totalEnergy;
 EcalGrid=theGrid->CreateGrid(5,-7.125,7.125,5,-7.125,7.125);
+          
+    Rad1 = new TH1F("Step1", "Radial Profile Step 2", 20, 0, 4);
+    Rad2 = new TH1F("Step2", "Radial Profile Step 6", 20, 0, 4);
+    Rad3 = new TH1F("Step3", "Radial Profile Step 13", 20, 0, 4);
+    Rad4 = new TH1F("Step4", "Radial Profile Step 20", 20, 0, 4);
 }
 
 void EMShower::prepareSteps() {
@@ -447,7 +452,7 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
               
               
                 
-             if (iStep==0 || iStep==1 )
+             /*if (iStep==0 || iStep==1 )
               { Spot_R12.push_back(make_pair(ri, spote));}
               
              if (iStep==4 || iStep==5)
@@ -457,10 +462,15 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
               {Spot_R1314.push_back(make_pair(ri, spote));}
               
               if (iStep==21 || iStep==22)
-              {Spot_R2223.push_back(make_pair(ri, spote));}
+              {Spot_R2223.push_back(make_pair(ri, spote));}*/
         
               
-              /*theGrid->Fill_(ri,spote,iStep,realTotalEnergy12,realTotalEnergy56,realTotalEnergy1314,realTotalEnergy2223);     */        
+              /*theGrid->Fill_(ri,spote,iStep,realTotalEnergy12,realTotalEnergy56,realTotalEnergy1314,realTotalEnergy2223);*/  
+              
+                if (iStep==0 || iStep==1 ) Rad1->Fill(ri,spote);
+                if (iStep==4 || iStep==5) Rad2->Fill(ri,spote);
+                if (iStep==12 || iStep==13) Rad3->Fill(ri,spote);
+                if (iStep==21 || iStep==22) Rad4->Fill(ri,spote);
               
           }
         }
@@ -476,12 +486,13 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
 
 
   }
-    realTotalEnergy12 = (Etot_step[0]+Etot_step[1]);
+    /*realTotalEnergy12 = (Etot_step[0]+Etot_step[1]);
     realTotalEnergy56 = (Etot_step[4]+Etot_step[5]);
     realTotalEnergy1314 = (Etot_step[12]+Etot_step[13]);
     realTotalEnergy2223 = (Etot_step[21]+Etot_step[22]);
 
-theGrid->Fill_(Spot_R12,Spot_R56,Spot_R1314,Spot_R2223,realTotalEnergy12,realTotalEnergy56,realTotalEnergy1314,realTotalEnergy2223);
+theGrid->Fill_(Spot_R12,Spot_R56,Spot_R1314,Spot_R2223,realTotalEnergy12,realTotalEnergy56,realTotalEnergy1314,realTotalEnergy2223);*/
+     
         
   double Etotal = 0.;
     
@@ -491,7 +502,7 @@ theGrid->Fill_(Spot_R12,Spot_R56,Spot_R1314,Spot_R2223,realTotalEnergy12,realTot
 }      
     
 theGrid->Draw_ECAL(EcalGrid);
-
+theGrid->Fill_(Rad1,Rad2,Rad3,Rad4); 
     
 
 }

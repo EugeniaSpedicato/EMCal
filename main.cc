@@ -25,7 +25,7 @@ EMECALShowerParametrization *myparam = new EMECALShowerParametrization(ecalprop,
 ECAL *TheEcal= new ECAL(5,-7.125,7.125,5,-7.125,7.125);   
     
     
-for (int i=0;i<100;++i) 
+for (int i=0;i<1000;++i) 
 {
     EMShower TheShower(gamma, myparam, TheEcal,bFixedLength,nPart,energy_in);
     TheShower.compute();

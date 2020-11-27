@@ -35,7 +35,7 @@ ECAL(double nbinsx,
 TH2F* CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double ylow,double yup);
 void AddHitCoo(double r,double phi,double xi,double yi,double w,TH2F* a);
 void Draw_ECAL(TH2F* a);
-void Fill_(vector<pair<double,double>> &Spot1,vector<pair<double,double>> &Spot2,vector<pair<double,double>> &Spot3,vector<pair<double,double>> &Spot4,double realTotalEnergy12,double realTotalEnergy56,double realTotalEnergy1314,double realTotalEnergy2223);
+void Fill_(TH1F* &Rad1, TH1F* &Rad2, TH1F* &Rad3, TH1F* &Rad4);
 void Fill_Lat(double tt, double stepEn);
 void Print_();
 void GiveNcell(double coox,double cooy,TH2F* a);
@@ -52,10 +52,10 @@ double spotEnergy;
 typedef map<int, int>  n_cell;
 n_cell number;
 
-TH1F* EnRad_3;
-TH1F* EnRad_6;
-TH1F* EnRad_13;
-TH1F* EnRad_20;
+TProfile* EnRad_3;
+TProfile* EnRad_6;
+TProfile* EnRad_13;
+TProfile* EnRad_20;
 TH1F* EnLong;
 
 };
