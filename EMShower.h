@@ -18,9 +18,9 @@
 #include <TGraph.h>
 
 
-using namespace std;
+#include <vector>
 
-
+class GammaFunctionGenerator;
 
 class EMShower {
   typedef ROOT::Math::XYZVector XYZPoint;
@@ -137,6 +137,10 @@ double realTotalEnergy2223;
     TH1F* Rad2;
     TH1F* Rad3;
     TH1F* Rad4;
+    TH1F* RadTot;
+    
+    TH1F* Longit;
+    
     
 
   //  Histos* myHistos;

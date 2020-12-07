@@ -35,8 +35,8 @@ ECAL(double nbinsx,
 TH2F* CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double ylow,double yup);
 void AddHitCoo(double r,double phi,double xi,double yi,double w,TH2F* a);
 void Draw_ECAL(TH2F* a);
-void Fill_(TH1F* &Rad1, TH1F* &Rad2, TH1F* &Rad3, TH1F* &Rad4);
-void Fill_Lat(double tt, double stepEn);
+void Fill_(TH1F* &Rad1, TH1F* &Rad2, TH1F* &Rad3, TH1F* &Rad4,TH1F* &RadTot);
+void Fill_Lat(TH1F* &Longit);
 void Print_();
 void GiveNcell(double coox,double cooy,TH2F* a);
 inline void setSpotEnergy(double e) { spotEnergy = e; }
@@ -56,7 +56,14 @@ TProfile* EnRad_3;
 TProfile* EnRad_6;
 TProfile* EnRad_13;
 TProfile* EnRad_20;
-TH1F* EnLong;
+TProfile* EnRad_3ERR;
+TProfile* EnRad_6ERR;
+TProfile* EnRad_13ERR;
+TProfile* EnRad_20ERR;
+TProfile* EnRad_tot;
+TProfile* EnLong;
+TProfile* EnLongERR;
+
 
 };
 #endif

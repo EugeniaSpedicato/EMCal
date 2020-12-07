@@ -6,6 +6,8 @@
 
 GammaFunctionGenerator::GammaFunctionGenerator() {
   xmax = 30.;
+    
+
 
   for (unsigned i = 1; i <= 12; ++i) {
     // For all let's put the limit at 2.*(alpha-1)      (alpha-1 is the max of the dist)
@@ -27,6 +29,7 @@ GammaFunctionGenerator::GammaFunctionGenerator() {
   coreCoeff.push_back(1. / 6.09188e-01);
   coreCoeff.push_back(1. / 6.06221e-01);
   coreCoeff.push_back(1. / 6.05057e-01);
+
 }
 
 GammaFunctionGenerator::~GammaFunctionGenerator(){}
@@ -95,17 +98,20 @@ double GammaFunctionGenerator::gammaInt() const {
 }
 
 void GammaFunctionGenerator::setParameters(double a, double b, double xm) {
-  //  std::cout << "Setting parameters " << std::endl;
-  alpha = a;
-  beta = b;
-  xmin = xm * beta;
+
+std::cout << "Setting parameters " << std::endl;
+alpha = a;
+std::cout << "Setting parameters " << std::endl;
+beta = b;
+xmin = xm * beta;
+    
   if (xm > xmax) {
     badRange = true;
     return;
   }
   badRange = false;
   na = 0;
-
+   
   if (alpha > 0. && alpha < 12)
     na = (unsigned)floor(alpha);
 
@@ -128,5 +134,6 @@ void GammaFunctionGenerator::setParameters(double a, double b, double xm) {
     coreProba = (integralToApproxLimit[gn] - tmp) / (1. - tmp);
     theGammas[gn].setSubInterval(xmin, approxLimit[gn]);
   }
+    
   //  std::cout << " Proba " << coreProba << std::endl;
 }

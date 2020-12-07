@@ -27,11 +27,11 @@ EMShower::EMShower(//const TRandom3* engine,
                    int nPart,
                    vector<double> energy_in)
     
-    : theParam(myParam),
+    : myGammaGenerator(gamma),
+      theParam(myParam),
       //thePart(myPart),
       theGrid(myGrid),
       //random(engine),
-      myGammaGenerator(gamma),
       bFixedLength_(bFixedLength),
       nPart(nPart) {
 
@@ -120,7 +120,11 @@ EcalGrid=theGrid->CreateGrid(5,-7.125,7.125,5,-7.125,7.125);
     Rad2 = new TH1F("Step2", "Radial Profile Step 6", 20, 0, 4);
     Rad3 = new TH1F("Step3", "Radial Profile Step 13", 20, 0, 4);
     Rad4 = new TH1F("Step4", "Radial Profile Step 20", 20, 0, 4);
+    RadTot = new TH1F("Step", "Radial Profile Total", 20, 0, 4);
+          
+    Longit = new TH1F("Long", "Longitudinal Profile", 25, 0, 25);
 }
+
 
 void EMShower::prepareSteps() {
   double dt;
@@ -287,11 +291,14 @@ void EMShower::compute() {
     if (!status)
       continue;
 
-    /*bool detailedShowerTail = false;
+    bool detailedShowerTail = false;
     // check if a detailed treatment of the rear leakage should be applied
-    if (ecal && !usePreviousGrid) {
-      detailedShowerTail = (t - dt > theGrid->getX0back());
-    }*/
+    if (!usePreviousGrid) {
+        // E' UNA PROVA!!!
+      //detailedShowerTail = (t - dt > theGrid->getX0back());
+      detailedShowerTail = (t - dt > 21);
+        
+    }
 
     // The particles of the shower are processed in parallel
     for ( int i = 0; i < nPart; ++i) {
@@ -344,8 +351,8 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
         cout << "con l'altro metodo è " << nsD << endl;
         
 
-      /*if (detailedShowerTail)
-        myGammaGenerator->setParameters(floor(a[i] + 0.5), b[i], t - dt);*/
+      if (detailedShowerTail)
+          myGammaGenerator->setParameters(floor(a[i] + 0.5), b[i], t - dt);
 
       //    myHistos->fill("h100",t,dE);
 
@@ -428,15 +435,15 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
             //	if( ecal ) theGrid->addHit(ri*theECAL->moliereRadius(),phi);
             // Now the *moliereRadius is done in EcalHitMaker
 
-              /*if (detailedShowerTail) {
+              if (detailedShowerTail) {
                 //			   std::cout << "About to call addHitDepth " << std::endl;
                 double depth; 
                 do {
-                  depth = myGammaGenerator->shoot(random);
+                  depth = myGammaGenerator->shoot();
                 } while (depth > t);
-                theGrid->addHitDepth(ri, phi, depth);
+                theGrid->AddHitCoo(ri,phi,0,0,spote,EcalGrid);
                 //			   std::cout << " Done " << std::endl;
-              } else */
+              } else 
   
               
               // theGrid->AddHitCoo(ri,phi,xi,yi,1,EcalGrid);
@@ -467,10 +474,11 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
               
               /*theGrid->Fill_(ri,spote,iStep,realTotalEnergy12,realTotalEnergy56,realTotalEnergy1314,realTotalEnergy2223);*/  
               
-                if (iStep==0 || iStep==1 ) Rad1->Fill(ri,spote);
-                if (iStep==4 || iStep==5) Rad2->Fill(ri,spote);
-                if (iStep==12 || iStep==13) Rad3->Fill(ri,spote);
+                if (iStep==1 || iStep==2 ) Rad1->Fill(ri,spote);
+                if (iStep==5 || iStep==6) Rad2->Fill(ri,spote);
+                if (iStep==18 || iStep==19) Rad3->Fill(ri,spote);
                 if (iStep==21 || iStep==22) Rad4->Fill(ri,spote);
+                RadTot->Fill(ri,spote);
               
           }
         }
@@ -482,8 +490,8 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
       
   cout << "-------> fine step numero " <<  iStep << " con Etotal_step = " << Etot_step[iStep] << " e con con Etot_step = " << Etot_step[iStep] << endl;
    
-      theGrid->Fill_Lat(tt, Etot_step[iStep]);
-
+      //theGrid->Fill_Lat(tt, Etot_step[iStep]);
+Longit->Fill(tt, Etot_step[iStep]);
 
   }
     /*realTotalEnergy12 = (Etot_step[0]+Etot_step[1]);
@@ -502,7 +510,10 @@ theGrid->Fill_(Spot_R12,Spot_R56,Spot_R1314,Spot_R2223,realTotalEnergy12,realTot
 }      
     
 theGrid->Draw_ECAL(EcalGrid);
-theGrid->Fill_(Rad1,Rad2,Rad3,Rad4); 
+theGrid->Fill_(Rad1,Rad2,Rad3,Rad4,RadTot); 
+theGrid->Fill_Lat(Longit);
+
+    
     
 
 }

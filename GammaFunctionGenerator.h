@@ -61,7 +61,8 @@ private:
   // alpha-na
   double frac;
   // alpha function parameters
-  double alpha, beta;
+  double alpha;
+  double beta;
   //  Incomlete Gamma = Int(0,x)[t^(alpha-1)exp(-t)dt]/Gamma(alpha);
   IncGamma myIncompleteGamma;
 
