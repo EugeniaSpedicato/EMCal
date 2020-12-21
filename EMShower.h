@@ -119,6 +119,7 @@ double realTotalEnergy2223;
 
   double totalEnergy;
 
+  double number;
 
     
     
@@ -138,6 +139,10 @@ double realTotalEnergy2223;
     TH1F* Rad3;
     TH1F* Rad4;
     TH1F* RadTot;
+    TH1F* en_1cell;
+    TH1F* en_3x3cell;
+    
+    
     
     TH1F* Longit;
     

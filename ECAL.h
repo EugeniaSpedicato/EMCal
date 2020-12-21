@@ -9,6 +9,8 @@
 #include <cmath>
 #include <map>
 #include <TMatrixD.h>
+#include <TGraph.h>
+
 #include <iostream>
 
 using namespace std;
@@ -33,12 +35,12 @@ ECAL(double nbinsx,
 
 
 TH2F* CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double ylow,double yup);
-void AddHitCoo(double r,double phi,double xi,double yi,double w,TH2F* a);
+double GiveNcell(double coox,double cooy,TH2F* a);
+double AddHitCoo(double r,double phi,double xi,double yi,double w,TH2F* a);
 void Draw_ECAL(TH2F* a);
-void Fill_(TH1F* &Rad1, TH1F* &Rad2, TH1F* &Rad3, TH1F* &Rad4,TH1F* &RadTot);
+void Fill_(TH1F* &Rad1, TH1F* &Rad2, TH1F* &Rad3, TH1F* &Rad4,TH1F* &RadTot, TH1F* &en_1cell,TH1F* &en_3x3cell);
 void Fill_Lat(TH1F* &Longit);
 void Print_();
-void GiveNcell(double coox,double cooy,TH2F* a);
 inline void setSpotEnergy(double e) { spotEnergy = e; }
 
 private:
@@ -63,7 +65,12 @@ TProfile* EnRad_20ERR;
 TProfile* EnRad_tot;
 TProfile* EnLong;
 TProfile* EnLongERR;
+TProfile* Er;
+TProfile* Er2;
 
-
+TProfile* sigma;
+TH1F* Energy_dist;
+TH1F* Energy_dist1;
+TH1F* Energy_dist3x3;
 };
 #endif

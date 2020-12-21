@@ -16,9 +16,9 @@ int main(){
 
 bool bFixedLength=true;
 int nPart=1;
-GammaFunctionGenerator* gamma;
+GammaFunctionGenerator* gamma= new GammaFunctionGenerator;
 std::vector<double> energy_in;
-energy_in.push_back(10);
+energy_in.push_back(100);
     
 ECALProperties *ecalprop;    
 EMECALShowerParametrization *myparam = new EMECALShowerParametrization(ecalprop,{100.0,0.1},{1.0,0.1,100.0,1.0},1,1);
@@ -36,7 +36,14 @@ TheEcal->Print_();
 
 
     
-/*ECALProperties *ecalprop; 
+/*
+   coo_in[0]= gRandom->Gaus(0,2.6); // in cm
+    coo_in[1]= gRandom->Gaus(0,2.7); // in cm
+        cout << "coo X " << coo_in[0] << endl;
+        cout << "coo Y " << coo_in[1] << endl;
+
+
+ECALProperties *ecalprop; 
 EMECALShowerParametrization *myParam = new EMECALShowerParametrization(ecalprop,{100.0,0.1},{1.0,0.1,100.0,1.0},1,1);
     
    double theMeanT = myParam->meanT(lny);

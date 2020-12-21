@@ -10,6 +10,7 @@
 
 #include "ECAL.h"
 
+
 using namespace std;
 
 ECAL::ECAL(double nbinsx, 
@@ -28,7 +29,7 @@ ECAL::ECAL(double nbinsx,
         number[22]=11; number[23]=12; number[24]=13; number[25]=14; number[26]=15;
         number[15]=16; number[16]=17; number[17]=18; number[18]=19; number[19]=20;
         number[8]=21; number[9]=22; number[10]=23; number[11]=24; number[12]=25;
-        
+      
     EnRad_3 = new TProfile("Step3", "Radial Profile 2-3 X0", 20, 0, 4, 0, 5);
     EnRad_3->SetErrorOption("S");
     EnRad_6 = new TProfile("Step6", "Radial Profile 6-7 X0", 20, 0, 4, 0, 5);
@@ -54,7 +55,21 @@ ECAL::ECAL(double nbinsx,
     EnLongERR = new TProfile("Long", "Longitudinal Profile with RMS", 25, 0, 25);
     EnLongERR->SetErrorOption("S");
     
+    Er= new TProfile("<E(r)>/E", "Mean Energy Fraction in r <E(r)>/E ", 20, 0, 4, 0, 5);
+    Er->SetErrorOption("S");
+        
+    Er2= new TProfile("<E(r)>", "Mean Energy Fraction in r <E(r)> ", 20, 0, 4);
+    Er2->SetErrorOption("S");
     
+    Energy_dist =new TH1F("Energy", "Energy",200,140,160);
+    Energy_dist1 =new TH1F("Energy", "Energy 1 cell",60,70,90);
+    Energy_dist3x3 =new TH1F("Energy", "Energy 3x3 cells",50,69,74);
+    
+
+    sigma =  new TProfile("Res", "Stochastic term",20, 0, 4, 0, 5);
+    sigma->SetErrorOption("S");
+        
+        
     }
 
 
@@ -67,12 +82,28 @@ TH2F* ECAL::CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double
 };
 
 
-// metodo che aggiunge il punto di coo(x,y) all'istogramma, quindi al calorimetro
-void ECAL::AddHitCoo(double r, double phi,double xi, double yi, double w, TH2F* a)
+// metodo che assegna il numero della cella che viene colpita dalla particella 
+double ECAL::GiveNcell(double coox,double cooy,TH2F* a)
+{   
+    int binx = a->GetXaxis()->FindBin(coox);
+    int biny = a->GetYaxis()->FindBin(cooy);
+    int nbin = a->GetBin(binx,biny);
+
+    //return number[nbin];
+    cout <<"Number of the cell:" << number[nbin] << endl;
+    //return number;
+    return number[nbin];
+};
+
+// metodo che aggiunge il punto di coo(x,y) all'istogramma, quindi al calorimetro e dà numero cella
+double ECAL::AddHitCoo(double r, double phi,double xi, double yi, double w, TH2F* a)
 {   r *= 2.19;
-    double x=r*cos(phi)+xi; // coo x
-    double y=r*sin(phi)+yi; // coo y
-    a->Fill(x,y,w);    
+    double x=r*cos(phi)+xi; // coo x in cm
+    double y=r*sin(phi)+yi; // coo y in cm
+    a->Fill(x,y,w);   
+ 
+double number=ECAL::GiveNcell(x,y,a);
+return number;
 };
 
 
@@ -109,31 +140,12 @@ Ecal_->SaveAs("/Users/eugenia/desktop/EMCal/Ecal.png");
 }*/
     
 
-/*void ECAL::Fill_(double ri, double spote, double iStep,double realTotalEnergy12,double realTotalEnergy56,double realTotalEnergy1314,double realTotalEnergy2223)
-{
-             if (iStep==0 || iStep==1 )
-              {
-                EnRad_3->Fill(ri,spote/realTotalEnergy12);
-              }
-              
-             if (iStep==4 || iStep==5)
-              {
-                EnRad_6->Fill(ri,spote/realTotalEnergy56);
-              }
-              
-              if (iStep==12 || iStep==13)
-              {
-                EnRad_13->Fill(ri,spote/realTotalEnergy1314);
-              }
-              
-              if (iStep==21 || iStep==22)
-              {
-                EnRad_20->Fill(ri,spote/realTotalEnergy2223);
-              }                
-}*/
 
-void ECAL::Fill_(TH1F* &Rad1, TH1F* &Rad2, TH1F* &Rad3, TH1F* &Rad4, TH1F* &RadTot)
+void ECAL::Fill_(TH1F* &Rad1, TH1F* &Rad2, TH1F* &Rad3, TH1F* &Rad4, TH1F* &RadTot, TH1F* &en_1cell, TH1F* &en_3x3cell)
 {
+
+
+    
 double c1=Rad1->Integral();
     
 double c2=Rad2->Integral();
@@ -170,7 +182,17 @@ double c5=RadTot->Integral();
     for (int i=0; i<nx5+1; ++i) 
     {
        EnRad_tot->Fill(RadTot->GetXaxis()->GetBinCenter(i),RadTot->GetBinContent(i)/(0.2*c5));
+        Er->Fill(RadTot->GetXaxis()->GetBinCenter(i),RadTot->Integral(0,i+1)/100);
+        Er2->Fill(RadTot->GetXaxis()->GetBinCenter(i),RadTot->Integral(0,i+1));
+        
+        //sigma->Fill(RadTot->GetXaxis()->GetBinCenter(i),(1/RadTot->Integral(0,i+1))*(sqrt(10)));
     }
+    
+    Energy_dist->Fill(RadTot->Integral());  
+    Energy_dist1->Fill(en_1cell->Integral());  
+    Energy_dist3x3->Fill(en_3x3cell->Integral());  
+    
+    
 }
 
 
@@ -184,41 +206,18 @@ void ECAL::Fill_Lat(TH1F* &Longit)
     for (int i=0; i<nx+1; ++i) 
     {
        EnLong->Fill(Longit->GetXaxis()->GetBinCenter(i),Longit->GetBinContent(i)/(1*c));
+        
     }
 
 }
 
-/*void ECAL::Fill_Lat(double tt, double stepEn)
-{
-    EnLong->Fill(tt,stepEn);
-}*/
-
-
 void ECAL::Print_()
 {
-/*double c3=EnRad_3->Integral();
-EnRad_3->Scale(1/c3);
-double c6=EnRad_6->Integral();
-EnRad_6->Scale(1/c6);
-double c13=EnRad_13->Integral();
-EnRad_13->Scale(1/c13);
-double c20=EnRad_20->Integral();
-EnRad_20->Scale(1/c20);*/
-
-// because of 1/dr in the histo article
-/*EnRad_3->Scale(1/0.2);
-EnRad_6->Scale(1/0.2);
-EnRad_13->Scale(1/0.2);
-EnRad_20->Scale(1/0.2);
-EnRad_3->Scale(1/100);
-EnRad_6->Scale(1/100);
-EnRad_13->Scale(1/100);
-EnRad_20->Scale(1/100);*/
     
-/*double c4=EnLong->Integral();
-EnLong->Scale(1/c4);
-// because of 1/dt in the histo article
-EnLong->Scale(1/1);*/
+int n=Er->GetNbinsX();
+for (int i=0; i<n+1; ++i) 
+{   
+sigma->Fill(Er2->GetXaxis()->GetBinCenter(i),(1/Er2->GetBinContent(i))*(sqrt(100)));}
 
     int nx1=EnRad_3->GetNbinsX();
     for (int i=0; i<nx1+1; ++i) 
@@ -242,8 +241,8 @@ EnLong->Scale(1/1);*/
     {
        EnRad_20ERR->Fill(EnRad_20->GetXaxis()->GetBinCenter(i),EnRad_20->GetBinContent(i)+EnRad_20->GetBinError(i));
     } 
-
     
+   
 TCanvas * en_lat= new TCanvas("en_lat","en_lat",1500,1000,3500,2000); 
 en_lat->Divide(2,2);
 en_lat->cd(1);
@@ -381,30 +380,52 @@ EnRad_tot->SetMarkerSize(2);
 EnRad_tot->Draw("HIST");
 EnRad_tot->Draw("HIST SAME P");
 gPad->SetLogy();
+en_tot3->SaveAs("/Users/eugenia/desktop/EMCal/TotRad.png");
+    
+TCanvas * E_r= new TCanvas("E_r","<Er>/E",1000,100,2500,2000);   
+Er->SetMaximum(1.1);
+Er->SetMinimum(0.5);
+Er->SetYTitle("<E(r)>/E");
+Er->SetXTitle("r (RM)");
+Er->SetLineColor(kPink);
+Er->SetMarkerColor(kBlack);
+Er->SetLineWidth(2);
+Er->SetMarkerStyle(20);
+Er->SetMarkerSize(2);
+Er->Draw("HIST");
+Er->Draw("HIST SAME P");
+E_r->SaveAs("/Users/eugenia/desktop/EMCal/Er.png");
+    
+TCanvas * sig= new TCanvas("Stoc","Stochastic Term",1000,100,2500,2000);   
+sigma->SetMaximum(0.5);
+sigma->SetMinimum(0.);
+sigma->SetYTitle("sigma/<E(r)> sqrt(E)");
+sigma->SetXTitle("r (RM)");
+sigma->SetLineColor(kOrange);
+sigma->SetMarkerColor(kBlue);
+sigma->SetLineWidth(2);
+sigma->SetMarkerStyle(20);
+sigma->SetMarkerSize(2);
+sigma->Draw("HIST");
+sigma->Draw("HIST SAME P");
+sig->SaveAs("/Users/eugenia/desktop/EMCal/StocTerm.png");
 
     
+TCanvas * encell= new TCanvas("Energy cells","Energy cells",1000,100,2500,2000);     
+encell->Divide(1,3);
+encell->cd(1);
+Energy_dist1->Fit("gaus");
+Energy_dist1->SetLineWidth(2);
+Energy_dist1->Draw("HIST same");
+encell->cd(2);
+Energy_dist3x3->Fit("gaus");
+Energy_dist3x3->SetLineWidth(2);
+Energy_dist3x3->Draw("HIST same");
+encell->cd(3);
+Energy_dist->Fit("gaus");
+Energy_dist->SetLineWidth(2);
+Energy_dist->Draw("HIST same");    
 
-en_tot3->SaveAs("/Users/eugenia/desktop/EMCal/TotRad.png");
+encell->SaveAs("/Users/eugenia/desktop/EMCal/EnCell.png");
+    
 }
-
-
-
-
-
-
-
-// metodo che assegna il numero della cella che viene colpita dalla particella 
-void ECAL::GiveNcell(double coox,double cooy,TH2F* a)
-{   
-    int binx = a->GetXaxis()->FindBin(coox);
-    int biny = a->GetYaxis()->FindBin(cooy);
-    int nbin = a->GetBin(binx,biny);
-
-    //return number[nbin];
-    cout <<"Number of the bin:" << number[nbin] << endl;
-    //return number;
-};
-
-
-
-
