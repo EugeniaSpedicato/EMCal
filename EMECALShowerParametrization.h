@@ -45,8 +45,8 @@ public:
   inline double meanTHom(double lny) const { return lny - 0.858; }
   //return lny-1.23; }
 
-  inline double meanAlphaHom(double lny) const {return 0.21 + (0.492 + 2.38 /68.36) * lny; } 
-    /* / theECAL->theZeff()68.36 */
+  inline double meanAlphaHom(double lny) const {return 0.21 + (0.492 + 2.38 /theECAL->theZeff()) * lny; } 
+    /* / theECAL->theZeff()theECAL->theZeff() */
     
   // ---- Fluctuated longitudinal profiles ----
 
@@ -76,8 +76,8 @@ public:
 
   inline double sigmaLnTHom(double lny) const { return 1. / (-1.4 + 1.26 * lny); }
 
-  inline double meanLnAlphaHom(double lny) const { return std::log(0.81 + (0.458 + 2.26 / 68.36) * lny); }
-    /* / theECAL->theZeff()68.36 */
+  inline double meanLnAlphaHom(double lny) const { return std::log(0.81 + (0.458 + 2.26 / theECAL->theZeff()) * lny); }
+    /* / theECAL->theZeff()theECAL->theZeff() */
 
   inline double sigmaLnAlphaHom(double lny) const { return 1. / (-0.58 + 0.86 * lny); }
 
@@ -128,13 +128,13 @@ public:
 
   // Fluctuations of the radial profiles
 
-  inline double nSpotsHom(double E) const { return 93. * std::log(68.36) * std::pow(E, 0.876); }  /* / theECAL->theZeff()68.36 */
+  inline double nSpotsHom(double E) const { return 93. * std::log(theECAL->theZeff()) * std::pow(E, 0.876); }  /* / theECAL->theZeff()theECAL->theZeff() */
 
-  inline double meanTSpotHom(double T) const { return T * (0.698 + 0.00212 * 68.36); }
-     /* / theECAL->theZeff()68.36 */
+  inline double meanTSpotHom(double T) const { return T * (0.698 + 0.00212 * theECAL->theZeff()); }
+     /* / theECAL->theZeff()theECAL->theZeff() */
 
-  inline double meanAlphaSpotHom(double alpha) const { return alpha * (0.639 + 0.00334 * 68.36); }
-/* / theECAL->theZeff()68.36 */
+  inline double meanAlphaSpotHom(double alpha) const { return alpha * (0.639 + 0.00334 * theECAL->theZeff()); }
+/* / theECAL->theZeff()theECAL->theZeff() */
     
   inline const ECALProperties* ecalProperties() const { return theECAL; }
 
@@ -150,18 +150,18 @@ private:
   double theRcfactor;
   double theRtfactor;
 
-  double p1() const { return 2.632 - 0.00094 * 68.36; }
-    /* / theECAL->theZeff()68.36 */
-  double p2() const { return 0.401 + 0.00187 * 68.36; }
-    /* / theECAL->theZeff()68.36 */
+  double p1() const { return 2.632 - 0.00094 * theECAL->theZeff(); }
+    /* / theECAL->theZeff()theECAL->theZeff() */
+  double p2() const { return 0.401 + 0.00187 * theECAL->theZeff(); }
+    /* / theECAL->theZeff()theECAL->theZeff() */
   double p3(double E) const { return 1.313 - 0.0686 * std::log(E); }
 
   double z1(double E) const { return 0.0251 + 0.00319 * std::log(E); }
-  double z2() const { return 0.1162 - 0.000381 * 68.36 ; }
-     /* / theECAL->theZeff()68.36 */
+  double z2() const { return 0.1162 - 0.000381 * theECAL->theZeff() ; }
+     /* / theECAL->theZeff()theECAL->theZeff() */
 
-  double k1() const { return 0.6590 - 0.00309 * 68.36 ; }
-     /* / theECAL->theZeff()68.36 */
+  double k1() const { return 0.6590 - 0.00309 * theECAL->theZeff() ; }
+     /* / theECAL->theZeff()theECAL->theZeff() */
   double k2() const { return 0.6450; }
   double k3() const { return -2.59; }
   double k4(double E) const { return 0.3585 + 0.0421 * std::log(E); }

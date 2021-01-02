@@ -25,6 +25,7 @@ EMShower::EMShower(//const TRandom3* engine,
                    ECAL* const myGrid,
                    bool bFixedLength,
                    int nPart,
+                   double X0depth,
                    vector<double> energy_in)
     
     : myGammaGenerator(gamma),
@@ -33,7 +34,9 @@ EMShower::EMShower(//const TRandom3* engine,
       theGrid(myGrid),
       //random(engine),
       bFixedLength_(bFixedLength),
-      nPart(nPart) {
+      nPart(nPart),
+      X0depth(X0depth) 
+{
 
   stepsCalculated = false;
           
@@ -41,24 +44,26 @@ EMShower::EMShower(//const TRandom3* engine,
  
 
 
-//--->double fotos = theECAL->photoStatistics() * theECAL->lightCollectionEfficiency();
-double fotos = 50.E3 * 0.03;
+double fotos = theECAL->photoStatistics() * theECAL->lightCollectionEfficiency();
+//--->double fotos = 50.E3 * 0.03;
 
   //nPart = thePart->size();
   totalEnergy = 0.;
   globalMaximum = 0.;
   double meanDepth = 0.;
   // Initialize the shower parameters for each particle
- 
-  for ( int i = 0; i < nPart; ++i) {
+ Xi=gRandom->Gaus(0,2.6);//2.6
+ Yi=gRandom->Gaus(0,2.7);//2.7
+          
+   for ( int i = 0; i < nPart; ++i) {
     //    std::cout << " AAA " << *(*thePart)[i] << std::endl;
     // The particle and the shower energy
     
     Etot.push_back(0.);
     E.push_back(energy_in[i]);
     totalEnergy += E[i];
-    //double lny = std::log(E[i] / theECAL->criticalEnergy());
-    double lny = std::log(E[i] / 8.74E-3);
+    double lny = std::log(E[i] / theECAL->criticalEnergy());
+    //double lny = std::log(E[i] / 8.74E-3);
     
     // Average and Sigma for T and alpha
     double theMeanT = myParam->meanT(lny);
@@ -289,14 +294,14 @@ void EMShower::compute() {
     if (!status)
       continue;
 
-    /*bool detailedShowerTail = false;
+    bool detailedShowerTail = false;
     // check if a detailed treatment of the rear leakage should be applied
     if (!usePreviousGrid) {
         // E' UNA PROVA!!!
       //detailedShowerTail = (t - dt > theGrid->getX0back());
-      detailedShowerTail = (t - dt > 24);
+      detailedShowerTail = (t - dt > outerDepth-X0depth);
         
-    }*/
+    }
 
     // The particles of the shower are processed in parallel
     for ( int i = 0; i < nPart; ++i) {
@@ -308,18 +313,6 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
       if (dE * E[i] < 0.000001)
         continue;
 
-        double mean = dE * E[i];
-        double sigma = theECAL->resE() * sqrt(mean);
-
-        double dE0 = dE;
-
-        dE = gRandom->Gaus(mean, sigma) / E[i];
-
-        if (dE * E[i] < 0.000001)
-          continue;
-        photos[i] = photos[i] * dE / dE0;
-
-
       totECalc += dE;
 
       // The number of energy spots (or mips)
@@ -330,8 +323,7 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
 
         dE = gRandom->Poisson(dE * photos[i]) / photos[i];
         double z0 = gRandom->Gaus(0., 1.);
-        dE *= 1. + z0 * 0.003;
-            //theECAL->lightCollectionUniformity();
+        dE *= 1. + z0 * theECAL->lightCollectionUniformity();
         
         cout << "che dopo aver aggiunto le fluttuazioni diventa " << dE << endl;
 
@@ -342,8 +334,8 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
         cout << "con l'altro metodo è " << nsD << endl;
         
 
-      /*if (detailedShowerTail)
-          myGammaGenerator->setParameters(floor(a[i] + 0.5), b[i], t - dt);*/
+      if (detailedShowerTail)
+          myGammaGenerator->setParameters(floor(a[i] + 0.5), b[i], t - dt);
 
 
 
@@ -422,29 +414,38 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
             // Generate phi
             double phi = 2. * M_PI * gRandom->Uniform(); //!!!!!!!!!
 cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi << ")" << endl;
-            // Add the hit in the crystal
-            //	if( ecal ) theGrid->addHit(ri*theECAL->moliereRadius(),phi);
+
             // Now the *moliereRadius is done in EcalHitMaker
 
-              /*if (detailedShowerTail) {
+              if (detailedShowerTail) {
                 //			   std::cout << "About to call addHitDepth " << std::endl;
                 double depth; 
-                do {
+                do { cout << "SIAMO QUIIIII" << endl;
                   depth = myGammaGenerator->shoot();
+                    cout << "depth è " << depth << endl;
                 } while (depth > t);
-                theGrid->AddHitCoo(ri,phi,0,0,spote,EcalGrid);
-                                
-            Etot[i] += spote;
-            //Etot_step[iStep][i] += spote;
-            Etot_step[iStep] += spote;
+                theGrid->AddHitCooDepth(ri,phi,Xi,Yi,spote,depth,X0depth,EcalGrid);
+                if (iStep==1) Rad1->Fill(ri,spote);
+                if (iStep==5) Rad2->Fill(ri,spote);
+                if (iStep==18) Rad3->Fill(ri,spote);
+                if (iStep==21) Rad4->Fill(ri,spote);
+                RadTot->Fill(ri,spote);            
+                Etot[i] += spote;
+                Etot_step[iStep] += spote;
                 //			   std::cout << " Done " << std::endl;
-              } else */
+            
+              } else 
   
+              {cout << "SIAMO AL SOLITO POSTO!!!!" << endl;
+            // This gives the number of the cell in which the particle impact  
+            //numberPart= theGrid->GiveCentralCell(Xi,Yi,EcalGrid);
+            // This gives the number of the cell where the spot is set 
+            numberSpot = theGrid->AddHitCoo(ri,phi,Xi,Yi,spote,EcalGrid);
+           // if (numberSpot!=0)
+            
               
-              // theGrid->AddHitCoo(ri,phi,xi,yi,1,EcalGrid);
-            number = theGrid->AddHitCoo(ri,phi,0,0,spote,EcalGrid);
             Etot[i] += spote;
-            //Etot_step[iStep][i] += spote;
+           
             Etot_step[iStep] += spote;
             
                 if (iStep==1) Rad1->Fill(ri,spote);
@@ -452,20 +453,19 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
                 if (iStep==18) Rad3->Fill(ri,spote);
                 if (iStep==21) Rad4->Fill(ri,spote);
                 RadTot->Fill(ri,spote);
-                if (number==13) en_1cell->Fill(ri,spote);
-                if (number==7 || number==8 ||number==9 || number==12 || number==13 || number==14|| number==17|| number==18|| number==19) en_3x3cell->Fill(ri,spote);
-              
+                /*if (numberSpot==numberPart) en_1cell->Fill(ri,spote);
+                if (numberSpot==numberPart-6 || numberSpot==numberPart-5 ||numberSpot==numberPart-4 || numberSpot==numberPart-1 || numberSpot==numberPart || numberSpot==numberPart+1|| numberSpot==numberPart+4|| numberSpot==numberPart+5|| numberSpot==numberPart+6) en_3x3cell->Fill(ri,spote);*/
                 
-              
+              }
           }
         }
       }
-        cout << " energia totale " << Etot[i]  << endl;
+        cout << " energia totale particella " << i << " è " << Etot[i]  << endl;
     }
     
 
       
-  cout << "-------> fine step numero " <<  iStep << " con Etotal_step = " << Etot_step[iStep] << " e con con Etot_step = " << Etot_step[iStep] << endl;
+  cout << "-------> fine step numero " <<  iStep << " con Etotal_step = " << Etot_step[iStep] << " e con con Etot_step = " << Etot_step[iStep] << " con Etot 1 = " << Etot[0] << " e con Etot 2 = " << Etot[1] << endl;
    
       //theGrid->Fill_Lat(tt, Etot_step[iStep]);
 Longit->Fill(tt, Etot_step[iStep]);

@@ -39,7 +39,7 @@ public:
   virtual double interactionLength() const = 0;
 
   ///Thickness (in cm) of the homegeneous material as a function of rapidity
-  virtual double thickness(double eta) const = 0;
+  //virtual double thickness(double eta) const = 0;
 
 private:
 };

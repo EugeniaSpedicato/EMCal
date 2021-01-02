@@ -33,10 +33,11 @@ ECAL(double nbinsx,
 
 //double radlen;
 
-
 TH2F* CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double ylow,double yup);
-double GiveNcell(double coox,double cooy,TH2F* a);
+double GiveCentralCell(double coox,double cooy,TH2F* a);
+int* GiveArray3x3(int n);
 double AddHitCoo(double r,double phi,double xi,double yi,double w,TH2F* a);
+void AddHitCooDepth(double r, double phi,double xi, double yi, double w, double depth, double deX0depthoffset_pth, TH2F* a);
 void Draw_ECAL(TH2F* a);
 void Fill_(TH1F* &Rad1, TH1F* &Rad2, TH1F* &Rad3, TH1F* &Rad4,TH1F* &RadTot, TH1F* &en_1cell,TH1F* &en_3x3cell);
 void Fill_Lat(TH1F* &Longit);
@@ -53,6 +54,8 @@ const double Yup;
 double spotEnergy;
 typedef map<int, int>  n_cell;
 n_cell number;
+n_cell Rev_number;
+
 
 TProfile* EnRad_3;
 TProfile* EnRad_6;
@@ -72,5 +75,7 @@ TProfile* sigma;
 TH1F* Energy_dist;
 TH1F* Energy_dist1;
 TH1F* Energy_dist3x3;
+
+int *Array9;
 };
 #endif

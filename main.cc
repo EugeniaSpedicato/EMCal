@@ -15,19 +15,26 @@ using namespace std;
 int main(){
 
 bool bFixedLength=true;
-int nPart=1;
+int nPart;
+double X0depth;
 GammaFunctionGenerator* gamma= new GammaFunctionGenerator;
 std::vector<double> energy_in;
-energy_in.push_back(100);
+energy_in.push_back(50);
+energy_in.push_back(50);
     
-ECALProperties *ecalprop;    
+int part_type=2; 
+    
+ECALProperties *ecalprop= new ECALProperties();    
 EMECALShowerParametrization *myparam = new EMECALShowerParametrization(ecalprop,{100.0,0.1},{1.0,0.1,100.0,1.0},1,1);
 ECAL *TheEcal= new ECAL(5,-7.125,7.125,5,-7.125,7.125);   
     
     
-for (int i=0;i<100;++i) 
+for (int i=0;i<1000;++i) 
 {
-    EMShower TheShower(gamma, myparam, TheEcal,bFixedLength,nPart,energy_in);
+    if (part_type==1) {nPart=1; X0depth=0;}
+    if (part_type==2) {nPart=2; X0depth=-log(gRandom->Uniform())*(9./7.);}
+    
+    EMShower TheShower(gamma, myparam, TheEcal,bFixedLength,nPart,X0depth,energy_in);
     TheShower.compute();
 } 
     
@@ -37,12 +44,6 @@ TheEcal->Print_();
 
     
 /*
-   coo_in[0]= gRandom->Gaus(0,2.6); // in cm
-    coo_in[1]= gRandom->Gaus(0,2.7); // in cm
-        cout << "coo X " << coo_in[0] << endl;
-        cout << "coo Y " << coo_in[1] << endl;
-
-
 ECALProperties *ecalprop; 
 EMECALShowerParametrization *myParam = new EMECALShowerParametrization(ecalprop,{100.0,0.1},{1.0,0.1,100.0,1.0},1,1);
     
