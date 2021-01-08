@@ -35,6 +35,7 @@ ECAL(double nbinsx,
 
 TH2F* CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double ylow,double yup);
 double GiveCentralCell(double coox,double cooy,TH2F* a);
+void SetEnergy(double energy);
 int* GiveArray3x3(int n);
 double AddHitCoo(double r,double phi,double xi,double yi,double w,TH2F* a);
 void AddHitCooDepth(double r, double phi,double xi, double yi, double w, double depth, double deX0depthoffset_pth, TH2F* a);
@@ -52,6 +53,7 @@ const double Xup;
 const double Ylow;
 const double Yup;
 double spotEnergy;
+double energy_IN;
 typedef map<int, int>  n_cell;
 n_cell number;
 n_cell Rev_number;

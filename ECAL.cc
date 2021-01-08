@@ -76,9 +76,9 @@ ECAL::ECAL(double nbinsx,
     Er2= new TProfile("<E(r)>", "Mean Energy Fraction in r <E(r)> ", 20, 0, 4);
     Er2->SetErrorOption("S");
     
-    Energy_dist =new TH1F("Energy", "Energy",100,90,100);
-    Energy_dist1 =new TH1F("Energy", "Energy 1 cell",150,90,105);
-    Energy_dist3x3 =new TH1F("Energy", "Energy 3x3 cells",150,80,100);
+    Energy_dist =new TH1F("Energy", "Energy",100,140,150);
+    Energy_dist1 =new TH1F("Energy", "Energy 1 cell",100,118,128);
+    Energy_dist3x3 =new TH1F("Energy", "Energy 3x3 cells",150,130,150);
     
 
     sigma =  new TProfile("Res", "Stochastic term",20, 0, 4, 0, 5);
@@ -97,7 +97,10 @@ TH2F* ECAL::CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double
     return EcalGrid;
 };
 
-
+void ECAL::SetEnergy(double energy)
+{
+    energy_IN=energy;
+}
 // metodo che assegna il numero della cella che viene colpita dalla particella 
 double ECAL::GiveCentralCell(double coox,double cooy,TH2F* a)
 {   
@@ -196,7 +199,8 @@ for (int i=0; i<9; ++i)
     if (Array9[i]>0 & Array9[i]<25 & Array9[i]!=0) energy3x3+=a->GetBinContent(Rev_number[Array9[i]]);
     cout << Rev_number[Array9[i]] << " and vera " << Array9[i]<< " c'è energia " << energy3x3 << endl;
 }
-Energy_dist3x3->Fill(energy3x3);  
+//Energy_dist3x3->Fill((energy3x3/energy_IN)*100);
+Energy_dist3x3->Fill(energy3x3);
 };
 
 //inline double getX0back() const { return maxX0_; }
@@ -518,8 +522,8 @@ encell->SaveAs("/Users/eugenia/desktop/EMCal/EnCell.png");
 
     
 // Observable
-RooRealVar energy3("energy3","energy3",80,100) ;
-RooRealVar mean("mean","mean",94,96.5) ;
+RooRealVar energy3("energy3","energy3",130,150) ;
+RooRealVar mean("mean","mean",142,144) ;
 RooRealVar sigma("sigma","sigma",0.2,1.6) ;
 RooRealVar alpha("alpha","alpha",1,0,20) ;
 RooRealVar n("n","n",4,1,8) ;
