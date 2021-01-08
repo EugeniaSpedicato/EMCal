@@ -1,4 +1,4 @@
-LDFLAGS=$(shell root-config --libs)
+LDFLAGS=$(shell root-config --libs) -lRooFit -lRooFitCore
 INCLUDE=$(shell root-config --incdir)
 CXXFLAGS=$(shell root-config --cflags)
 CXX=$(shell root-config --cxx)
