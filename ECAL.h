@@ -74,7 +74,7 @@ TProfile* Er;
 TProfile* Er2;
 
 TProfile* sigma;
-TH1F* Energy_dist;
+//TH1F* Energy_dist;
 TH1F* Energy_dist1;
 TH1F* Energy_dist3x3;
 

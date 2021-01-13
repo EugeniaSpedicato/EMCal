@@ -5,9 +5,13 @@
 #include <iostream>
 #include <TCanvas.h>
 #include <TStyle.h>
+#include <TLine.h>
 #include <TColor.h>
+#include <TFile.h>
+
 #include "RooDataHist.h"
 #include "RooCBShape.h"
+#include "RooGaussian.h"
 #include "RooAddPdf.h"
 #include "RooPlot.h"
 #include "RooRealVar.h"
@@ -76,10 +80,9 @@ ECAL::ECAL(double nbinsx,
     Er2= new TProfile("<E(r)>", "Mean Energy Fraction in r <E(r)> ", 20, 0, 4);
     Er2->SetErrorOption("S");
     
-    Energy_dist =new TH1F("Energy", "Energy",100,140,150);
-    Energy_dist1 =new TH1F("Energy", "Energy 1 cell",100,118,128);
-    Energy_dist3x3 =new TH1F("Energy", "Energy 3x3 cells",150,130,150);
-    
+    //Energy_dist =new TH1F("Energy", "Energy",100,90,100);
+    Energy_dist1 =new TH1F("Energy", "Energy 1 cell",150,77,87);
+    Energy_dist3x3 =new TH1F("Energy", "Energy 3x3 cells",150,86,100);
 
     sigma =  new TProfile("Res", "Stochastic term",20, 0, 4, 0, 5);
     sigma->SetErrorOption("S");
@@ -108,7 +111,7 @@ double ECAL::GiveCentralCell(double coox,double cooy,TH2F* a)
     int biny = a->GetYaxis()->FindBin(cooy);
     int nbin = a->GetBin(binx,biny);
 
-    cout <<"Number of the cell:" << number[nbin] << endl;
+    //cout <<"Number of the cell:" << number[nbin] << endl;
 
     return number[nbin];
 };
@@ -162,7 +165,7 @@ void ECAL::AddHitCooDepth(double r, double phi,double xi, double yi, double w, d
     double y=r*sin(phi)+yi; // coo y in cm
  if (24.7-X0depth>depth) 
  {a->Fill(x,y,w);   
-double number=ECAL::GiveCentralCell(x,y,a); cout <<"è giusto"<< endl;}
+double number=ECAL::GiveCentralCell(x,y,a); }
 
 };
 
@@ -189,34 +192,19 @@ Ecal_->SaveAs("/Users/eugenia/desktop/EMCal/Ecal.png");
 // riempi celle    
 int binMax=a->GetMaximumBin();  
 int CentralCell=number[binMax];
-cout << "cella centrale rev " << Rev_number[CentralCell] <<" and vera " << CentralCell << endl;
-Energy_dist1->Fill(a->GetBinContent(binMax));
-
+//cout << "cella centrale rev " << Rev_number[CentralCell] <<" and vera " << CentralCell << endl;
+//Energy_dist1->Fill(a->GetBinContent(binMax));
+Energy_dist1->Fill((a->GetBinContent(binMax)/energy_IN)*100);
 double energy3x3=0.;    
 ECAL::GiveArray3x3(CentralCell);
 for (int i=0; i<9; ++i)
 {
     if (Array9[i]>0 & Array9[i]<25 & Array9[i]!=0) energy3x3+=a->GetBinContent(Rev_number[Array9[i]]);
-    cout << Rev_number[Array9[i]] << " and vera " << Array9[i]<< " c'è energia " << energy3x3 << endl;
+    //cout << Rev_number[Array9[i]] << " and vera " << Array9[i]<< " c'è energia " << energy3x3 << endl;
 }
-//Energy_dist3x3->Fill((energy3x3/energy_IN)*100);
-Energy_dist3x3->Fill(energy3x3);
+Energy_dist3x3->Fill((energy3x3/energy_IN)*100);
+//Energy_dist3x3->Fill(energy3x3);
 };
-
-//inline double getX0back() const { return maxX0_; }
-
-/*void ECAL::Fill_(vector<pair<double,double>> &Spot1,vector<pair<double,double>> &Spot2,vector<pair<double,double>> &Spot3,vector<pair<double,double>> &Spot4,double realTotalEnergy12,double realTotalEnergy56,double realTotalEnergy1314,double realTotalEnergy2223)
-{
-    for (int i=0; i< Spot1.size(); ++i)
-    {EnRad_3->Fill(Spot1[i].first,Spot1[i].second/(1000*realTotalEnergy12));}     
-    for (int i=0; i< Spot2.size(); ++i)
-    {EnRad_6->Fill(Spot2[i].first,Spot2[i].second/(1000*realTotalEnergy56));}
-    for (int i=0; i< Spot3.size(); ++i)
-    {EnRad_13->Fill(Spot3[i].first,Spot3[i].second/(1000*realTotalEnergy1314));}
-    for (int i=0; i< Spot4.size(); ++i)
-    {EnRad_20->Fill(Spot4[i].first,Spot4[i].second/(1000*realTotalEnergy2223)); }         
-}*/
-    
 
 
 void ECAL::Fill_(TH1F* &Rad1, TH1F* &Rad2, TH1F* &Rad3, TH1F* &Rad4, TH1F* &RadTot, TH1F* &en_1cell, TH1F* &en_3x3cell)
@@ -260,13 +248,12 @@ double c5=RadTot->Integral();
     for (int i=0; i<nx5+1; ++i) 
     {
        EnRad_tot->Fill(RadTot->GetXaxis()->GetBinCenter(i),RadTot->GetBinContent(i)/(0.2*c5));
-        //Er->Fill(RadTot->GetXaxis()->GetBinCenter(i),RadTot->Integral(0,i+1)/100);
-        //Er2->Fill(RadTot->GetXaxis()->GetBinCenter(i),RadTot->Integral(0,i+1));
-        
+        Er->Fill(RadTot->GetXaxis()->GetBinCenter(i),RadTot->Integral(0,i+1)/energy_IN);
+        Er2->Fill(RadTot->GetXaxis()->GetBinCenter(i),RadTot->Integral(0,i+1));
         //sigma->Fill(RadTot->GetXaxis()->GetBinCenter(i),(1/RadTot->Integral(0,i+1))*(sqrt(10)));
     }
     
-    Energy_dist->Fill(RadTot->Integral());  
+    //Energy_dist->Fill(RadTot->Integral());  
     //Energy_dist1->Fill(en_1cell->Integral());  
     //Energy_dist3x3->Fill(en_3x3cell->Integral());  
     
@@ -292,10 +279,9 @@ void ECAL::Fill_Lat(TH1F* &Longit)
 void ECAL::Print_()
 {
     
-/*int n=Er->GetNbinsX();
-for (int i=0; i<n+1; ++i) 
-{   
-sigma->Fill(Er2->GetXaxis()->GetBinCenter(i),(1/Er2->GetBinContent(i))*(sqrt(100)));}*/
+int ner=Er->GetNbinsX();
+for (int i=0; i<ner+1; ++i) 
+{sigma->Fill(Er2->GetXaxis()->GetBinCenter(i),(0.678/Er2->GetBinContent(i))*(sqrt(energy_IN)));}
 
     int nx1=EnRad_3->GetNbinsX();
     for (int i=0; i<nx1+1; ++i) 
@@ -460,37 +446,24 @@ EnRad_tot->Draw("HIST SAME P");
 gPad->SetLogy();
 en_tot3->SaveAs("/Users/eugenia/desktop/EMCal/TotRad.png");
     
-/*TCanvas * E_r= new TCanvas("E_r","<Er>/E",1000,100,2500,2000);   
-Er->SetMaximum(1.1);
-Er->SetMinimum(0.5);
-Er->SetYTitle("<E(r)>/E");
-Er->SetXTitle("r (RM)");
-Er->SetLineColor(kPink);
-Er->SetMarkerColor(kBlack);
-Er->SetLineWidth(2);
-Er->SetMarkerStyle(20);
-Er->SetMarkerSize(2);
-Er->Draw("HIST");
-Er->Draw("HIST SAME P");
-E_r->SaveAs("/Users/eugenia/desktop/EMCal/Er.png");
     
 TCanvas * sig= new TCanvas("Stoc","Stochastic Term",1000,100,2500,2000);   
 sigma->SetMaximum(0.5);
 sigma->SetMinimum(0.);
 sigma->SetYTitle("sigma/<E(r)> sqrt(E)");
 sigma->SetXTitle("r (RM)");
-sigma->SetLineColor(kOrange);
-sigma->SetMarkerColor(kBlue);
+sigma->SetLineColor(46);
+sigma->SetMarkerColor(kBlack);
 sigma->SetLineWidth(2);
 sigma->SetMarkerStyle(20);
 sigma->SetMarkerSize(2);
-sigma->Draw("HIST");
+sigma->Draw("HIST L");
 sigma->Draw("HIST SAME P");
-sig->SaveAs("/Users/eugenia/desktop/EMCal/StocTerm.png");*/
+sig->SaveAs("/Users/eugenia/desktop/EMCal/StocTerm.png");
 
     
 TCanvas * encell= new TCanvas("Energy cells","Energy cells",1000,100,2500,2000);     
-encell->Divide(1,3);
+encell->Divide(1,2);
 encell->cd(1);
 /*TF1* f1 = new TF1("f1", "gaus",141.5, 144.5);
 TF1* f1pol = new TF1("f1pol", "pol3",140, 141.5);
@@ -499,36 +472,24 @@ TF1* f2 = new TF1("f2", "gaus",146.5, 148);
 TF1* f2pol = new TF1("f2pol", "pol3",144, 146.5);*/
     
 
-    
-Energy_dist1->Fit("gaus");
-Energy_dist1->SetLineWidth(2);
+Energy_dist1->SetLineWidth(3);
 Energy_dist1->Draw("same");
 encell->cd(2);
-Energy_dist3x3->Fit("gaus");
-/*Energy_dist3x3->Fit("f1","R");
-Energy_dist3x3->Fit("f1pol","R+");*/
-    
-Energy_dist3x3->SetLineWidth(2);
+Energy_dist3x3->SetLineWidth(3);
 Energy_dist3x3->Draw("same");
-encell->cd(3);
-Energy_dist->Fit("gaus");
-/*Energy_dist->Fit("f2","R");
-Energy_dist->Fit("f2pol","R+");*/
-    
-Energy_dist->SetLineWidth(2);
-Energy_dist->Draw("same");    
 
 encell->SaveAs("/Users/eugenia/desktop/EMCal/EnCell.png");
 
     
 // Observable
-RooRealVar energy3("energy3","energy3",130,150) ;
-RooRealVar mean("mean","mean",142,144) ;
-RooRealVar sigma("sigma","sigma",0.2,1.6) ;
+RooRealVar energy3("energy3","energy3",86,100) ;
+RooRealVar mean("mean","mean",94,96) ;
+RooRealVar sigma0("sigma0","sigma0",0.2,1.5) ;
 RooRealVar alpha("alpha","alpha",1,0,20) ;
 RooRealVar n("n","n",4,1,8) ;
-RooCBShape CrystallBall("CrystallBall", "CrystallBall", energy3, mean, sigma, alpha, n);
-
+    
+RooCBShape CrystallBall("CrystallBall", "CrystallBall", energy3, mean, sigma0, alpha, n);
+    
 
 RooDataHist en3("en3x3","en3x3",energy3,Import(*Energy_dist3x3));
 
@@ -536,13 +497,81 @@ RooPlot *frame = energy3.frame(Title("energy 3x3 cells"));
 en3.plotOn(frame,MarkerStyle(kFullDotMedium));
 CrystallBall.fitTo(en3);
 CrystallBall.plotOn(frame);
+cout << "chiiii fram3x3 " << frame->chiSquare() << endl;
 CrystallBall.paramOn(frame,Layout(0.12,0.50));
 frame->Draw();
     
+    
+RooRealVar energy1("energy1","energy1",77,87) ;
+RooRealVar mean1("mean1","mean1",75,85) ;
+RooRealVar sigma1("sigma1","sigma1",0,5) ;
+RooRealVar alpha1("alpha1","alpha1",0,20) ;
+RooRealVar n1("n1","n1",1,10) ;
+RooCBShape CrystallBall1("CrystallBall1", "CrystallBall1", energy1, mean1, sigma1, alpha1, n1);
+    
+RooDataHist en1("en1cell","en1cell",energy1,Import(*Energy_dist1));
+
+RooPlot *frame1 = energy1.frame(Title("energy 1 cell"));
+en1.plotOn(frame1,MarkerStyle(kFullDotMedium));
+CrystallBall1.fitTo(en1);
+CrystallBall1.plotOn(frame1);
+cout << "chiiii frame1 " << frame1->chiSquare() << endl;
+CrystallBall1.paramOn(frame1,Layout(0.12,0.50));
+frame1->Draw();
+    
+/*RooRealVar energy1("energy1","energy1",30,90) ;
+RooRealVar mean1("mean1","mean1",81,84);
+RooRealVar sigma1("sigma1","sigma1",0,2);
+RooGaussian Gauss("Gauss", "Gauss", energy1, mean1, sigma1);
+    
+RooDataHist en1("en1cell","en1cell",energy1,Import(*Energy_dist1));
+
+RooPlot *frame1 = energy1.frame(Title("energy 1 cell"));
+en1.plotOn(frame1,MarkerStyle(kFullDotMedium));
+Gauss.fitTo(en1);
+Gauss.plotOn(frame1);
+cout << "chiiii frame1 " << frame1->chiSquare() << endl;
+Gauss.paramOn(frame1,Layout(0.12,0.50));
+frame1->Draw();*/
+    
+TCanvas * E_r= new TCanvas("E_r","<Er>/E",1000,100,2500,2000);   
+Er->SetMaximum(1.1);
+Er->SetMinimum(0.5);
+Er->SetYTitle("<E(r)>/E");
+Er->SetXTitle("r (RM)");
+Er->SetLineColor(9);
+Er->SetMarkerColor(kBlack);
+Er->SetLineWidth(2);
+Er->SetMarkerStyle(20);
+Er->SetMarkerSize(2);
+gStyle->SetOptStat(0);
+TLine *line = new TLine(1.95,0.5,1.95,1.5);
+TLine *line2 = new TLine(0.65,0.5,0.65,1.5);
+
+line->SetLineColor(kRed);
+line->SetLineStyle(2);
+line2->SetLineColor(kRed);
+line2->SetLineStyle(2);
+Er->Draw("HIST L");
+Er->Draw("HIST SAME P");
+line->Draw("same");
+line2->Draw("same");
+E_r->SaveAs("/Users/eugenia/desktop/EMCal/Er.png");
+    
 TCanvas* cROO= new TCanvas("cROO","cROO",400,10,1100,800);
+cROO->Divide(1,2);
+cROO->cd(1);
+frame1->GetXaxis()->SetTitle("Energy [GeV]");
+frame1->Draw();
+cROO->cd(2);
 frame->GetXaxis()->SetTitle("Energy [GeV]");
 frame->Draw();
 cROO->SaveAs("/Users/eugenia/desktop/EMCal/frame.png");
 
+    
+TFile* file = new TFile("sigma.root","UPDATE");
+sigma->Write("SIGMA150");
+file->Close();
+    
     
 }

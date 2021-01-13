@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include <iostream>
-#include <TCanvas.h>
+#include <math.h>
 #include "/Applications/root_v6.20.00/include/Math/SpecFuncMathCore.h"
 #include "IncGamma.h"
 

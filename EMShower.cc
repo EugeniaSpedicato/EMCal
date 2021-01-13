@@ -56,7 +56,7 @@ double fotos = theECAL->photoStatistics() * theECAL->lightCollectionEfficiency()
  Yi=gRandom->Gaus(0,0);//2.7
           
    for ( int i = 0; i < nPart; ++i) {
-    //    std::cout << " AAA " << *(*thePart)[i] << std::endl;
+    //    std::// cout << " AAA " << *(*thePart)[i] << std::endl;
     // The particle and the shower energy
     
     Etot.push_back(0.);
@@ -123,7 +123,7 @@ EcalGrid=theGrid->CreateGrid(5,-7.125,7.125,5,-7.125,7.125);
     Rad2 = new TH1F("Step2", "Radial Profile Step 6", 20, 0, 4);
     Rad3 = new TH1F("Step3", "Radial Profile Step 13", 20, 0, 4);
     Rad4 = new TH1F("Step4", "Radial Profile Step 20", 20, 0, 4);
-    RadTot = new TH1F("Step", "Radial Profile Total", 20, 0, 4);
+    RadTot = new TH1F("Step", "Radial Profile Total", 60, 0, 4);
     Longit = new TH1F("Long", "Longitudinal Profile", 25, 0, 25);
     en_1cell = new TH1F("1cell", "Energy central cell", 20, 0, 4);
     en_3x3cell = new TH1F("3x3cell", "Energy 3x3 cell", 20, 0, 4);
@@ -173,7 +173,7 @@ void EMShower::prepareSteps() {
         steps.push_back(stepLast);
       }
       last_Ecal_step = steps.size() - 1;
-      //      std::cout << "radlen = "  << radlen << " stps = " << stps << " dt = " << dt << std::endl;
+      //      std::// cout << "radlen = "  << radlen << " stps = " << stps << " dt = " << dt << std::endl;
       radlen = 0.;
     }
   }
@@ -196,7 +196,7 @@ void EMShower::prepareSteps() {
     t += dt;
     for ( int i = 0; i < nPart; ++i) {
       depositedEnergy[iStep].push_back(deposit(t, a[i], b[i], dt));
-    cout << " % energia depositata allo step " << iStep << " è " << depositedEnergy[iStep][i] << endl;
+    // cout << " % energia depositata allo step " << iStep << " è " << depositedEnergy[iStep][i] << endl;
       ESliceTot += depositedEnergy[iStep][i];
       MeanDepth += deposit(t, a[i] + 1., b[i], dt) / b[i] * a[i];
         
@@ -214,7 +214,7 @@ void EMShower::prepareSteps() {
     if (realTotalEnergy < 0.001) {
       offset -= 1;
     }
-       cout << " energia depositata allo step " << iStep << " è " << realTotalEnergy << " GeV"<< endl;
+       // cout << " energia depositata allo step " << iStep << " è " << realTotalEnergy << " GeV"<< endl;
 
    Etot_step.push_back(0.);  
       
@@ -240,7 +240,7 @@ void EMShower::compute() {
 
     TGraph* nSpot_histo = new TGraph();
     
-    cout << "Step preparati" << endl;
+    // cout << "Step preparati" << endl;
     
   // Loop over all segments for the longitudinal development
   double totECalc = 0;
@@ -257,7 +257,7 @@ void EMShower::compute() {
     
     dt = steps[iStep].second;
     
-      cout << "Lunghezza dello step " << iStep << " è dt = " << dt <<endl;
+      // cout << "Lunghezza dello step " << iStep << " è dt = " << dt <<endl;
     // The elapsed length
     t += dt;
     // Build the grid of crystals at this ECAL depth
@@ -271,7 +271,7 @@ void EMShower::compute() {
     for (int i = 0; i < nPart; ++i) {
       realTotalEnergy += depositedEnergy[iStep][i] * E[i];
     }
-    cout << "Allo step " << iStep << " in tt = " << tt << " (metà step) ho E = " << realTotalEnergy << endl;
+    // cout << "Allo step " << iStep << " in tt = " << tt << " (metà step) ho E = " << realTotalEnergy << endl;
    
       
 
@@ -294,21 +294,22 @@ void EMShower::compute() {
     if (!status)
       continue;
 
-    bool detailedShowerTail = false;
+    /*bool detailedShowerTail = false;
     // check if a detailed treatment of the rear leakage should be applied
     if (!usePreviousGrid) {
         // E' UNA PROVA!!!
       //detailedShowerTail = (t - dt > theGrid->getX0back());
-      detailedShowerTail = (t - dt > outerDepth-X0depth);
+      detailedShowerTail = (t - dt > outerDepth-X0depth);}*/
         
-    }
+  
+      
 
     // The particles of the shower are processed in parallel
     for ( int i = 0; i < nPart; ++i) {
 
       //  integration of the shower profile between t-dt and t
       double dE = depositedEnergy[iStep][i];
-cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
+// cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
       // no need to do the full machinery if there is ~nothing to distribute)
       if (dE * E[i] < 0.000001)
         continue;
@@ -325,17 +326,17 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
         double z0 = gRandom->Gaus(0., 1.);
         dE *= 1. + z0 * theECAL->lightCollectionUniformity();
         
-        cout << "che dopo aver aggiunto le fluttuazioni diventa " << dE << endl;
+        // cout << "che dopo aver aggiunto le fluttuazioni diventa " << dE << endl;
 
         // Expected spot number
         nS = (theNumberOfSpots[i] * gam(bSpot[i] * tt, aSpot[i]) * bSpot[i] * dt / tgamma(aSpot[i]));
         double nsD = (theNumberOfSpots[i] * deposit(tt, aSpot[i], bSpot[i], dt));
-        cout << "il numero di spot in questo dt è " << nS << endl;
-        cout << "con l'altro metodo è " << nsD << endl;
+        // cout << "il numero di spot in questo dt è " << nS << endl;
+        // cout << "con l'altro metodo è " << nsD << endl;
         
 
-      if (detailedShowerTail)
-          myGammaGenerator->setParameters(floor(a[i] + 0.5), b[i], t - dt);
+     /* if (detailedShowerTail)
+          myGammaGenerator->setParameters(floor(a[i] + 0.5), b[i], t - dt);*/
 
 
 
@@ -345,7 +346,7 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
       double eSpot = (nS > 0.) ? dE / nS : 0.;
       double SpotEnergy = eSpot * E[i];
         
-        cout << "La cui energia SpotEnergy " << SpotEnergy << endl;
+        // cout << "La cui energia SpotEnergy " << SpotEnergy << endl;
         
 
       int nSpot = (int)(nS + 0.5);
@@ -368,16 +369,16 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
       unsigned nSpots_core = (unsigned)(dSpotsCore + 0.5);
       unsigned nSpots_tail = ((unsigned)nSpot > nSpots_core) ? nSpot - nSpots_core : 0;
         
-        cout << "il numero di spot nel core " << nSpots_core << endl;
-        cout << "il numero di spot nella tail " << nSpots_tail << endl;
+        // cout << "il numero di spot nel core " << nSpots_core << endl;
+        // cout << "il numero di spot nella tail " << nSpots_tail << endl;
         
 
       for (unsigned icomp = 0; icomp < 2; ++icomp) {
         double theR = (icomp == 0) ? theRC : theRT;
         unsigned ncompspots = (icomp == 0) ? nSpots_core : nSpots_tail;
           
-          cout << "ora siamo in icomp = " << icomp << " quindi il raggio è " << theR << endl;
-          cout << "e la spot Energy " << SpotEnergy << endl;
+          // cout << "ora siamo in icomp = " << icomp << " quindi il raggio è " << theR << endl;
+          // cout << "e la spot Energy " << SpotEnergy << endl;
           
           
         RadialInterval radInterval(theR, ncompspots, SpotEnergy/*, random*/);
@@ -396,16 +397,16 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
           double spote = radInterval.getSpotEnergy(irad); 
             theGrid->setSpotEnergy(spote);
 
-        cout << "Siamo nell'intervallo interno " << irad << " in cui la spot energy è " << spote << endl;
+        // cout << "Siamo nell'intervallo interno " << irad << " in cui la spot energy è " << spote << endl;
             
           unsigned nradspots = radInterval.getNumberOfSpots(irad);
             
-             cout << "Dopo aver fatto passaggi vari (moltiplicato per percentual etc..) trovo che il vero N spot = " << nradspots << endl;
+             // cout << "Dopo aver fatto passaggi vari (moltiplicato per percentual etc..) trovo che il vero N spot = " << nradspots << endl;
             
           double umin = radInterval.getUmin(irad);
           double umax = radInterval.getUmax(irad);
           // Go for the lateral development
-          //	       std::cout << "Couche " << iStep << " irad = " << irad << " Ene = " << E[i] << " eSpot = " << eSpot << " spote = " << spote << " nSpot = " << nS << std::endl;
+          //	       std::// cout << "Couche " << iStep << " irad = " << irad << " Ene = " << E[i] << " eSpot = " << eSpot << " spote = " << spote << " nSpot = " << nS << std::endl;
 
           for (unsigned ispot = 0; ispot < nradspots; ++ispot) {
             double z3 = gRandom->Uniform(umin, umax); //!!!!!!!!!
@@ -413,16 +414,16 @@ cout << " % di enrgia depositata dalla particella è E%= " << dE << endl;
 
             // Generate phi
             double phi = 2. * M_PI * gRandom->Uniform(); //!!!!!!!!!
-cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi << ")" << endl;
+// cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi << ")" << endl;
 
             // Now the *moliereRadius is done in EcalHitMaker
 
-              if (detailedShowerTail) {
-                //			   std::cout << "About to call addHitDepth " << std::endl;
+              /*if (detailedShowerTail) {
+                //			   std::// cout << "About to call addHitDepth " << std::endl;
                 double depth; 
-                do { cout << "SIAMO QUIIIII" << endl;
+                do { // cout << "SIAMO QUIIIII" << endl;
                   depth = myGammaGenerator->shoot();
-                    cout << "depth è " << depth << endl;
+                    // cout << "depth è " << depth << endl;
                 } while (depth > t);
                 theGrid->AddHitCooDepth(ri,phi,Xi,Yi,spote,depth,X0depth,EcalGrid);
                 if (iStep==1) Rad1->Fill(ri,spote);
@@ -432,11 +433,11 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
                 RadTot->Fill(ri,spote);            
                 Etot[i] += spote;
                 Etot_step[iStep] += spote;
-                //			   std::cout << " Done " << std::endl;
+                //			   std::// cout << " Done " << std::endl;
             
-              } else 
+              } else */
   
-              {cout << "SIAMO AL SOLITO POSTO!!!!" << endl;
+          //    {// cout << "SIAMO AL SOLITO POSTO!!!!" << endl;
             // This gives the number of the cell in which the particle impact  
             //numberPart= theGrid->GiveCentralCell(Xi,Yi,EcalGrid);
             // This gives the number of the cell where the spot is set 
@@ -453,19 +454,18 @@ cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi <
                 if (iStep==18) Rad3->Fill(ri,spote);
                 if (iStep==21) Rad4->Fill(ri,spote);
                 RadTot->Fill(ri,spote);
-                /*if (numberSpot==numberPart) en_1cell->Fill(ri,spote);
-                if (numberSpot==numberPart-6 || numberSpot==numberPart-5 ||numberSpot==numberPart-4 || numberSpot==numberPart-1 || numberSpot==numberPart || numberSpot==numberPart+1|| numberSpot==numberPart+4|| numberSpot==numberPart+5|| numberSpot==numberPart+6) en_3x3cell->Fill(ri,spote);*/
-                
-              }
+
+              
+             // }
           }
         }
       }
-        cout << " energia totale particella " << i << " è " << Etot[i]  << endl;
+        // cout << " energia totale particella " << i << " è " << Etot[i]  << endl;
     }
     
 
       
-  cout << "-------> fine step numero " <<  iStep << " con Etotal_step = " << Etot_step[iStep] << " e con con Etot_step = " << Etot_step[iStep] << " con Etot 1 = " << Etot[0] << " e con Etot 2 = " << Etot[1] << endl;
+  // cout << "-------> fine step numero " <<  iStep << " con Etotal_step = " << Etot_step[iStep] << " e con con Etot_step = " << Etot_step[iStep] << " con Etot 1 = " << Etot[0] << " e con Etot 2 = " << Etot[1] << endl;
    
       //theGrid->Fill_Lat(tt, Etot_step[iStep]);
 Longit->Fill(tt, Etot_step[iStep]);
@@ -486,7 +486,7 @@ theGrid->Fill_(Spot_R12,Spot_R56,Spot_R1314,Spot_R2223,realTotalEnergy12,realTot
     Etotal += Etot[i];
 }      
     
-
+cout << "Energia totale " << Etotal << endl;
     
 theGrid->Draw_ECAL(EcalGrid);
 theGrid->Fill_(Rad1,Rad2,Rad3,Rad4,RadTot,en_1cell,en_3x3cell); 
@@ -549,12 +549,12 @@ double EMShower::deposit(double t, double a, double b, double dt) {
 }
 
 void EMShower::setIntervals(unsigned icomp, RadialInterval& rad) {
-  //  std::cout << " Got the pointer " << std::endl;
+  //  std::// cout << " Got the pointer " << std::endl;
   const std::vector<double>& myValues((icomp) ? theParam->getTailIntervals() : theParam->getCoreIntervals());
-  //  std::cout << " Got the vector " << myValues.size () << std::endl;
+  //  std::// cout << " Got the vector " << myValues.size () << std::endl;
   unsigned nvals = myValues.size() / 2;
   for (unsigned iv = 0; iv < nvals; ++iv) {
-    //      std::cout << myValues[2*iv] << " " <<  myValues[2*iv+1] <<std::endl;
+    //      std::// cout << myValues[2*iv] << " " <<  myValues[2*iv+1] <<std::endl;
     rad.addInterval(myValues[2 * iv], myValues[2 * iv + 1]);
   }
 }
@@ -562,7 +562,7 @@ void EMShower::setIntervals(unsigned icomp, RadialInterval& rad) {
 
 
 double EMShower::deposit(double a, double b, double t) {
-  //  std::cout << " Deposit " << std::endl;
+  //  std::// cout << " Deposit " << std::endl;
   //myIncompleteGamma.a().setValue(a);
 //TF1* g=myIncompleteGamma.MyGamma();
 //myIncompleteGamma.Set_a(a,g);
@@ -571,6 +571,6 @@ double EMShower::deposit(double a, double b, double t) {
   if (fabs(b2) < 1.e-9)
     b2 = 1.e-9;
   result = myIncompleteGamma.MyGamma(a,b2);
-  //  std::cout << " deposit t = " << t  << " "  << result <<std::endl;
+  //  std::// cout << " deposit t = " << t  << " "  << result <<std::endl;
   return result;
   }
