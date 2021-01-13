@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include <iostream>
-#include <math.h>
+#include <Math/SpecFuncMathCore.h>
 #include "IncGamma.h"
 
 using namespace ROOT;
