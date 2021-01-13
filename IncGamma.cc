@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <math.h>
-#include "/Applications/root_v6.20.00/include/Math/SpecFuncMathCore.h"
 #include "IncGamma.h"
 
 using namespace ROOT;
