@@ -34,13 +34,16 @@ ECAL(double nbinsx,
 //double radlen;
 
 TH2F* CreateGrid(double nbinsx,double xlow,double xup,double nbinsy,double ylow,double yup);
-double GiveCentralCell(double coox,double cooy,TH2F* a);
+TH2F* GiveEcalGrid();
+
+double GiveCentralCell(double coox,double cooy );
 void SetEnergy(double energy);
 int* GiveArray3x3(int n);
-double AddHitCoo(double r,double phi,double xi,double yi,double w,TH2F* a);
-void AddHitCooDepth(double r, double phi,double xi, double yi, double w, double depth, double deX0depthoffset_pth, TH2F* a);
-void Draw_ECAL(TH2F* a);
+double AddHitCoo(double r,double phi,double xi,double yi,double w);
+void AddHitCooDepth(double r, double phi,double xi, double yi, double w, double depth, double deX0depthoffset_pth);
+void Draw_ECAL(double Xi, double Yi,int i);
 void Fill_(TH1F* &Rad1, TH1F* &Rad2, TH1F* &Rad3, TH1F* &Rad4,TH1F* &RadTot, TH1F* &en_1cell,TH1F* &en_3x3cell);
+vector<double> EnergyContent();
 void Fill_Lat(TH1F* &Longit);
 void Print_();
 inline void setSpotEnergy(double e) { spotEnergy = e; }
@@ -57,6 +60,10 @@ double energy_IN;
 typedef map<int, int>  n_cell;
 n_cell number;
 n_cell Rev_number;
+n_cell Rev_numberX;
+n_cell Rev_numberY;
+    
+vector<double> E_cell;
 
 
 TProfile* EnRad_3;
@@ -77,6 +84,18 @@ TProfile* sigma;
 //TH1F* Energy_dist;
 TH1F* Energy_dist1;
 TH1F* Energy_dist3x3;
+TH1F* E_tot;
+TH2F* EcalGrid;
+TH1F* E_sigma_tot;
+TH1F* E_sigma_2;
+TH1F* E_sigma_4;
+TProfile* En_r1x1;
+TProfile* En_r3x3;
+TProfile* En_N3x3;
+
+TH1F* residual;
+
+ TH2F* X_Y_e;
 
 int *Array9;
 };

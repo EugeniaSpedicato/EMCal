@@ -52,8 +52,8 @@ double fotos = theECAL->photoStatistics() * theECAL->lightCollectionEfficiency()
   globalMaximum = 0.;
   double meanDepth = 0.;
   // Initialize the shower parameters for each particle
- Xi=gRandom->Gaus(0,2.6);//2.6
- Yi=gRandom->Gaus(0,2.7);//2.7
+ Xi=0.;//gRandom->Uniform(-1.4,1.4);//2.6
+ Yi=0.;//gRandom->Uniform(-1.4,1.4);//2.7
           
    for ( int i = 0; i < nPart; ++i) {
     //    std::// cout << " AAA " << *(*thePart)[i] << std::endl;
@@ -111,13 +111,13 @@ double fotos = theECAL->photoStatistics() * theECAL->lightCollectionEfficiency()
     TSpot.push_back(theParam->meanTSpot(theMeanT));
     aSpot.push_back(theParam->meanAlphaSpot(theMeanAlpha));
     bSpot.push_back((aSpot[i] - 1.) / TSpot[i]);
-
   }
 
 
   globalMaximum /= totalEnergy;
   meanDepth /= totalEnergy;
-EcalGrid=theGrid->CreateGrid(5,-7.125,7.125,5,-7.125,7.125);
+theGrid->CreateGrid(5,-7.125,7.125,5,-7.125,7.125);
+
           
     Rad1 = new TH1F("Step1", "Radial Profile Step 2", 20, 0, 4);
     Rad2 = new TH1F("Step2", "Radial Profile Step 6", 20, 0, 4);
@@ -229,7 +229,7 @@ void EMShower::prepareSteps() {
   stepsCalculated = true;
 }
 
-void EMShower::compute() {
+void EMShower::compute(int i) {
 
   double t = 0.;
   double dt = 0.;
@@ -294,12 +294,12 @@ void EMShower::compute() {
     if (!status)
       continue;
 
-    /*bool detailedShowerTail = false;
+    bool detailedShowerTail = false;
     // check if a detailed treatment of the rear leakage should be applied
     if (!usePreviousGrid) {
         // E' UNA PROVA!!!
       //detailedShowerTail = (t - dt > theGrid->getX0back());
-      detailedShowerTail = (t - dt > outerDepth-X0depth);}*/
+      detailedShowerTail = (t - dt > 24.7-X0depth);}
         
   
       
@@ -326,7 +326,6 @@ void EMShower::compute() {
         double z0 = gRandom->Gaus(0., 1.);
         dE *= 1. + z0 * theECAL->lightCollectionUniformity();
         
-        // cout << "che dopo aver aggiunto le fluttuazioni diventa " << dE << endl;
 
         // Expected spot number
         nS = (theNumberOfSpots[i] * gam(bSpot[i] * tt, aSpot[i]) * bSpot[i] * dt / tgamma(aSpot[i]));
@@ -335,8 +334,8 @@ void EMShower::compute() {
         // cout << "con l'altro metodo è " << nsD << endl;
         
 
-     /* if (detailedShowerTail)
-          myGammaGenerator->setParameters(floor(a[i] + 0.5), b[i], t - dt);*/
+     if (detailedShowerTail)
+          myGammaGenerator->setParameters(floor(a[i] + 0.5), b[i], t - dt);
 
 
 
@@ -411,21 +410,22 @@ void EMShower::compute() {
           for (unsigned ispot = 0; ispot < nradspots; ++ispot) {
             double z3 = gRandom->Uniform(umin, umax); //!!!!!!!!!
             double ri = theR * std::sqrt(z3 / (1. - z3));
-
+              
             // Generate phi
             double phi = 2. * M_PI * gRandom->Uniform(); //!!!!!!!!!
 // cout << "lo spot " << ispot << " si trova in (r,phi) = (" << ri << ", " << phi << ")" << endl;
 
             // Now the *moliereRadius is done in EcalHitMaker
 
-              /*if (detailedShowerTail) {
+              if (detailedShowerTail) {
                 //			   std::// cout << "About to call addHitDepth " << std::endl;
                 double depth; 
                 do { // cout << "SIAMO QUIIIII" << endl;
                   depth = myGammaGenerator->shoot();
+                    cout << "shoot depth: " << depth << endl;
                     // cout << "depth è " << depth << endl;
                 } while (depth > t);
-                theGrid->AddHitCooDepth(ri,phi,Xi,Yi,spote,depth,X0depth,EcalGrid);
+                theGrid->AddHitCooDepth(ri,phi,Xi,Yi,spote,depth,X0depth);
                 if (iStep==1) Rad1->Fill(ri,spote);
                 if (iStep==5) Rad2->Fill(ri,spote);
                 if (iStep==18) Rad3->Fill(ri,spote);
@@ -435,13 +435,13 @@ void EMShower::compute() {
                 Etot_step[iStep] += spote;
                 //			   std::// cout << " Done " << std::endl;
             
-              } else */
-  
-          //    {// cout << "SIAMO AL SOLITO POSTO!!!!" << endl;
+              } else 
+
+              {// cout << "SIAMO AL SOLITO POSTO!!!!" << endl;  
             // This gives the number of the cell in which the particle impact  
-            //numberPart= theGrid->GiveCentralCell(Xi,Yi,EcalGrid);
+            //numberPart= theGrid->GiveCentralCell(Xi,Yi);
             // This gives the number of the cell where the spot is set 
-            numberSpot = theGrid->AddHitCoo(ri,phi,Xi,Yi,spote,EcalGrid);
+            numberSpot = theGrid->AddHitCoo(ri,phi,Xi,Yi,spote);
            // if (numberSpot!=0)
             
               
@@ -454,9 +454,11 @@ void EMShower::compute() {
                 if (iStep==18) Rad3->Fill(ri,spote);
                 if (iStep==21) Rad4->Fill(ri,spote);
                 RadTot->Fill(ri,spote);
+                double ray=sqrt(Xi*Xi+Yi*Yi);  
+                  
 
               
-             // }
+              }
           }
         }
       }
@@ -488,7 +490,7 @@ theGrid->Fill_(Spot_R12,Spot_R56,Spot_R1314,Spot_R2223,realTotalEnergy12,realTot
     
 cout << "Energia totale " << Etotal << endl;
     
-theGrid->Draw_ECAL(EcalGrid);
+theGrid->Draw_ECAL(Xi,Yi,i);
 theGrid->Fill_(Rad1,Rad2,Rad3,Rad4,RadTot,en_1cell,en_3x3cell); 
 theGrid->Fill_Lat(Longit);
 

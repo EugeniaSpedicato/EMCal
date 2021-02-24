@@ -19,7 +19,9 @@ int nPart;
 double X0depth;
 GammaFunctionGenerator* gamma= new GammaFunctionGenerator;
 std::vector<double> energy_in;
-energy_in.push_back(100);
+energy_in.push_back(50);
+//energy_in.push_back(75);
+    
     
 int part_type=1; 
     
@@ -27,18 +29,21 @@ ECALProperties *ecalprop= new ECALProperties();
 EMECALShowerParametrization *myparam = new EMECALShowerParametrization(ecalprop,{100.0,0.1},{1.0,0.1,100.0,1.0},1,1);
 ECAL *TheEcal= new ECAL(5,-7.125,7.125,5,-7.125,7.125);   
     
-    
-for (int i=0;i<4000;++i) 
+//TheEcal->CreateGrid(5,-7.125,7.125,5,-7.125,7.125);
+
+for (int i=0;i<1000;++i) 
 {
     if (part_type==1) {nPart=1; X0depth=0; TheEcal->SetEnergy(energy_in[0]);}
     if (part_type==2) {nPart=2; X0depth=-log(gRandom->Uniform())*(9./7.);
                        double energy=energy_in[0]+energy_in[1];
                        TheEcal->SetEnergy(energy);}
     EMShower TheShower(gamma, myparam, TheEcal,bFixedLength,nPart,X0depth,energy_in);
-    TheShower.compute();
+    TheShower.compute(i);
 } 
-    
-
+/*vector<double> Ecell=TheEcal->EnergyContent();
+for(int i=0;i<25;++i)
+{cout << "energy cell " << i+1 << " is " << Ecell[i] << endl; }
+TheEcal->Draw_ECAL();*/
 TheEcal->Print_();
 
 

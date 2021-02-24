@@ -46,7 +46,7 @@ public:
   void prepareSteps();
 
   /// Compute the shower longitudinal and lateral development
-  void compute();
+  void compute(int i);
 
   /// get the depth of the centre of gravity of the shower(s)
   //  inline double getMeanDepth() const {return globalMeanDepth;};
@@ -141,7 +141,7 @@ double Yi;
 
   // The crystal grid
   ECAL* theGrid;
-  TH2F* EcalGrid;
+  //TH2F* EcalGrid;
 
   // Histos
     TH1F* Rad1;
@@ -151,6 +151,7 @@ double Yi;
     TH1F* RadTot;
     TH1F* en_1cell;
     TH1F* en_3x3cell;
+
     
     
     

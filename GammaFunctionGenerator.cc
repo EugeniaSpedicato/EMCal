@@ -7,8 +7,6 @@
 GammaFunctionGenerator::GammaFunctionGenerator() {
   xmax = 30.;
     
-
-
   for (unsigned i = 1; i <= 12; ++i) {
     // For all let's put the limit at 2.*(alpha-1)      (alpha-1 is the max of the dist)
     approxLimit.push_back(2 * ((double)i));
@@ -101,7 +99,6 @@ void GammaFunctionGenerator::setParameters(double a, double b, double xm) {
 
 std::cout << "Setting parameters " << std::endl;
 alpha = a;
-std::cout << "Setting parameters " << std::endl;
 beta = b;
 xmin = xm * beta;
     
