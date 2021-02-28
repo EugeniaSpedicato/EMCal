@@ -100,7 +100,9 @@ Rev_numberY[21]=1; Rev_numberY[22]=1; Rev_numberY[23]=1; Rev_numberY[24]=1; Rev_
     E_sigma_2=new TH1F("Energy2", "Energy 5x5",150,20,40); 
     E_sigma_4=new TH1F("Energy4", "Energy 5x5",150,30,40);  
     
+    Emean_out =new TH2F("MeanEnergy", "Mean energy 16 out cells",100,0.5,100.5,150,0.,0.5);//0.77,0.87
 
+        
     sigma =  new TProfile("Res", "Stochastic term",20, 0, 4, 0, 5);
     sigma->SetErrorOption("S");
     
@@ -116,7 +118,10 @@ Rev_numberY[21]=1; Rev_numberY[22]=1; Rev_numberY[23]=1; Rev_numberY[24]=1; Rev_
      
         X_Y_e  = new TH2F("CooEL" , " X  Vs. Y of the electron",500,-7,7,500,-7,7);
         
-        residual = new TH1F("residual", "Residual", 100, -1, 1);
+        residual = new TH1F("residual", "Residual", 50, -0.5, 0.5);
+        residuoX = new TH1F("residual", "Residual Xcal-Xtr", 100, -0.8, 0.8);
+        residuoY = new TH1F("residual", "Residual Ycal-Ytr", 100, -0.8, 0.8);
+        
 
     }
 
@@ -201,7 +206,7 @@ void ECAL::AddHitCooDepth(double r, double phi,double xi, double yi, double w, d
  cout << "depth: " << depth << ", 24.7-X0depth" << 24.7-X0depth << endl;
  if (24.7-X0depth>depth) 
  {EcalGrid->Fill(x,y,w);   cout << "è aggiunto "<<endl; 
- X_Y_e->Fill(x,y);}
+ X_Y_e->Fill(x,y,w);}
 
 };
 
@@ -260,10 +265,12 @@ for(int i=0; i<9; ++i)
 {
 double x = EcalGrid->GetXaxis()->GetBinCenter(Rev_numberX[Array9[i]]);
 double y = EcalGrid->GetYaxis()->GetBinCenter(Rev_numberY[Array9[i]]);
-    
-double w=4.0+log(EcalGrid->GetBinContent(Rev_number[Array9[i]])/energy3x3);
-double wi=(w>0)?w:0;
+ 
+double wi=0;    
+if(EcalGrid->GetBinContent(Rev_number[Array9[i]])>0.01) {double w=4.0+log(EcalGrid->GetBinContent(Rev_number[Array9[i]])/energy3x3);
+     wi=(w>0)?w:0;}
 //double wi=EcalGrid->GetBinContent(Rev_number[Array9[i]]);
+else wi=0;     
     
 Ex+=wi*x;
 Ey+=wi*y;
@@ -272,6 +279,9 @@ wtot+=wi;
 double centroidX=(Ex)/wtot;
 double centroidY=(Ey)/wtot;  
     
+double E16=(energy_tot-energy3x3)/16;
+
+    
 double ddd=sqrt((centroidX-Xi)*(centroidX-Xi)+(centroidY-Yi)*(centroidY-Yi));    
 double r_cal=sqrt((centroidX)*(centroidX)+(centroidY)*(centroidY));  
 double r_trak=sqrt((Xi)*(Xi)+(Yi)*(Yi));  
@@ -279,9 +289,15 @@ double a=(r_cal>r_trak)?(+1):(-1);
 double res=ddd*a;
 
     cout << " r_cal " << r_cal << ", r_trak " << r_trak << endl;
-    cout << " centroidX " << centroidX << ", centroidY " << centroidY << endl;
+
+ double dx=centroidX-Xi;
+ double dy=centroidY-Yi;
+
+    cout << " dx " << dx << ", dy " << dy << endl;    
     
-residual->Fill(res);
+residuoX->Fill(dx);
+residuoY->Fill(dy);
+Emean_out->Fill(energy3x3,E16);
     
 };
 
@@ -367,9 +383,9 @@ void ECAL::Fill_Lat(TH1F* &Longit)
 
 void ECAL::Print_()
 {
-E_sigma_tot->Fit("gaus");
+/*E_sigma_tot->Fit("gaus");
 TF1 *p1 = E_sigma_tot->GetFunction("gaus");
-double si = p1->GetParameter(2);    
+double si = p1->GetParameter(2);    */
 
 /*E_sigma_2->Fit("gaus");
 TF1 *p2 = E_sigma_2->GetFunction("gaus");
@@ -382,8 +398,8 @@ si[2] = p3->GetParameter(2);    */
     
 
 int ner=Er->GetNbinsX();
-for (int i=0; i<ner+1; ++i) 
-{sigma->Fill(Er2->GetXaxis()->GetBinCenter(i),(si/Er2->GetBinContent(i))*(sqrt(energy_IN)));} 
+/*for (int i=0; i<ner+1; ++i) 
+{sigma->Fill(Er2->GetXaxis()->GetBinCenter(i),(si/Er2->GetBinContent(i))*(sqrt(energy_IN)));} */
 
     int nx1=EnRad_3->GetNbinsX();
     for (int i=0; i<nx1+1; ++i) 
@@ -549,7 +565,7 @@ gPad->SetLogy();
 en_tot3->SaveAs("/Users/eugenia/desktop/EMCal/TotRad.png");
     
     
-TCanvas * sig= new TCanvas("Stoc","Stochastic Term",1000,100,2500,2000);   
+/*TCanvas * sig= new TCanvas("Stoc","Stochastic Term",1000,100,2500,2000);   
 sigma->SetMaximum(0.5);
 sigma->SetMinimum(0.);
 sigma->SetYTitle("sigma/<E(r)> sqrt(E)");
@@ -561,18 +577,13 @@ sigma->SetMarkerStyle(20);
 sigma->SetMarkerSize(2);
 sigma->Draw("HIST L");
 sigma->Draw("HIST SAME P");
-sig->SaveAs("/Users/eugenia/desktop/EMCal/StocTerm.png");
+sig->SaveAs("/Users/eugenia/desktop/EMCal/StocTerm.png");*/
 
-    
+    cout << "maaaaaaaaa " << endl;
+  /*  
 TCanvas * encell= new TCanvas("Energy cells","Energy cells",1000,100,2500,2000);     
 encell->Divide(1,3);
 encell->cd(1);
-/*TF1* f1 = new TF1("f1", "gaus",141.5, 144.5);
-TF1* f1pol = new TF1("f1pol", "pol3",140, 141.5);
-    
-TF1* f2 = new TF1("f2", "gaus",146.5, 148);
-TF1* f2pol = new TF1("f2pol", "pol3",144, 146.5);*/
-    
 
 Energy_dist1->SetLineWidth(3);
 Energy_dist1->Fit("gaus");
@@ -630,7 +641,7 @@ CrystallBall5.plotOn(frame5);
 cout << "chiiii fram5x5 " << frame5->chiSquare() << endl;
 CrystallBall5.paramOn(frame5,Layout(0.12,0.33));
 en5.statOn(frame5,Layout(0.12,0.33,0.65)) ;
-frame5->Draw();
+frame5->Draw();*/
         
 /*RooRealVar energy1("energy1","energy1",0.30,1) ;
 RooRealVar mean1("mean1","mean1",0.75,0.85) ;
@@ -649,7 +660,7 @@ cout << "chiiii frame1 " << frame1->chiSquare() << endl;
 CrystallBall1.paramOn(frame1,Layout(0.12,0.50));
 en1.statOn(frame1,Layout(0.12,0.33,0.65)) ;
 
-frame1->Draw();*/
+frame1->Draw();
     
 RooRealVar energy1("energy1","energy1",0.77,0.87) ;//0.77,0.87
 RooRealVar mean1("mean1","mean1",0.81,0.84);
@@ -702,10 +713,10 @@ frame->Draw();
 cROO->cd(3);
 frame5->GetXaxis()->SetTitle("E_rec/E_true");
 frame5->Draw();
-cROO->SaveAs("/Users/eugenia/desktop/EMCal/frame.png");
+cROO->SaveAs("/Users/eugenia/desktop/EMCal/frame.png");*/
 
 TCanvas* graph= new TCanvas("gr","gr",400,10,1100,800);
-graph->Divide(1,3);
+/*graph->Divide(1,3);
     graph->cd(1);
     En_r1x1->SetTitle("Coordinate impact point-energy 1 cell");
     En_r1x1->GetYaxis()->SetTitle("Erec/Etrue");
@@ -724,7 +735,7 @@ graph->Divide(1,3);
     En_r3x3->SetLineWidth(2);
     En_r1x1->SetLineColor(kRed);
     En_r3x3->Draw();
-    graph->cd(3);
+    graph->cd(3);*/
     residual->SetTitle("Number impact cell-energy 1cell/3x3 cells");
     residual->GetYaxis()->SetTitle("R9");
     residual->GetXaxis()->SetTitle("r[cm]");
@@ -737,8 +748,24 @@ graph->Divide(1,3);
     En_N3x3->GetXaxis()->SetTitle("N_cell");
     En_N3x3->SetLineWidth(2);
     En_N3x3->Draw();*/
-
+cout << "perc" << endl;
     graph->SaveAs("/Users/eugenia/desktop/EMCal/En-impact.png");
+    
+TCanvas * cres= new TCanvas("cres","cres",1000,100,2500,2000);  
+cres->Divide(1,2);
+cres->cd(1);   
+residuoX->GetXaxis()->SetTitle("r [cm]");
+residuoX->SetLineWidth(3);
+residuoX->Fit("gaus");
+gStyle->SetOptFit(1011);
+residuoX->Draw("same"); 
+cres->cd(2); 
+residuoY->GetXaxis()->SetTitle("r [cm]");
+residuoY->SetLineWidth(3);
+residuoY->Fit("gaus");
+gStyle->SetOptFit(1011);
+residuoY->Draw("same"); 
+cres->SaveAs("/Users/eugenia/desktop/EMCal/res.png");
     
     TCanvas * duedmu= new TCanvas("duedmu","duedmu",1000,100,2500,2000);
     gStyle->SetPalette(kLake);
@@ -748,4 +775,15 @@ graph->Divide(1,3);
     X_Y_e->GetXaxis()->SetTitle("x [m]");
     X_Y_e->GetYaxis()->SetTitle("y [m]");
   duedmu->SaveAs("/Users/eugenia/desktop/EMCal/dued.png");  
+    
+    
+TCanvas * out= new TCanvas("out","out",1000,100,2500,2000); 
+Emean_out->SetLineWidth(3);
+Emean_out->GetXaxis()->SetTitle("E_rec/E_true"); 
+Emean_out->Draw();
+gPad->SetLogy();
+out->SaveAs("/Users/eugenia/desktop/EMCal/Emeanout.png"); 
+    
+    
+    
 }

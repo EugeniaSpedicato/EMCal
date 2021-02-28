@@ -19,7 +19,7 @@ int nPart;
 double X0depth;
 GammaFunctionGenerator* gamma= new GammaFunctionGenerator;
 std::vector<double> energy_in;
-energy_in.push_back(50);
+energy_in.push_back(100);
 //energy_in.push_back(75);
     
     

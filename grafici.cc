@@ -8,6 +8,12 @@ void grafici()
 {
     double x[]{10,40,75,100,130,150};
     
+    
+    double xE[]{5,10,20,40,55,75,100,130,150};
+    double yE[]{2.73,2.16,1.82,1.47,1.39,1.28,1.22,1.15,1.12};
+    
+    TGraph* res = new TGraph(9,xE,yE);
+    
    /*//Sigma gaussiane
     double y1_0[]{83.397,83.164,82.834,82.602,82.403,82.280};
     double s1_0[]{1.932,1.053,0.8463,0.7724,0.7208,0.690};
@@ -57,7 +63,7 @@ void grafici()
     //double sigmaNORM[]{1.283,0.640,0.528,0.502,0.467,0.461};
     double sigmaNORM[]{0.0133,0.00667,0.00551,0.00523,0.00487,0.00483};
     TGraph* sigmainv = new TGraph(6,x,sigmaNORM);
-    TF1 *f1 = new TF1("f1","sqrt(([0]/sqrt(x))*([0]/sqrt(x))+([1]/x)*([1]/x)+([2])*([2]))",0,150);
+    TF1 *f1 = new TF1("f1","sqrt(([0]/sqrt(x))*([0]/sqrt(x))+[1]*[1])",0,150);
 
     /*TCanvas * perc= new TCanvas("a","a",1000,100,2500,2000); 
     perc->Divide(2,2);
@@ -115,9 +121,9 @@ void grafici()
     perc->SaveAs("/Users/eugenia/desktop/EMCal2/grafici/percE1cell.png");  */
     
     
-    TCanvas * perc3= new TCanvas("a","a",5000,1000,3500,2500); 
+     /*TCanvas * perc3= new TCanvas("a","a",5000,1000,3500,2500); 
     perc3->Divide(2,1);
-    /*perc3->cd(1);
+   perc3->cd(1);
     perc_3x3_0->SetLineWidth(2);
     perc_3x3_0->SetMarkerStyle(8);
     perc_3x3_0->SetMarkerSize(1.3);
@@ -127,7 +133,7 @@ void grafici()
     perc_3x3_0->SetTitle("Percentage energy 3x3 cell (0,0)");
     perc_3x3_0->GetXaxis()->SetTitle("E [GeV]");
     perc_3x3_0->GetYaxis()->SetTitle("%E_reco/E_in");
-    perc_3x3_0->Draw("ACP");*/
+    perc_3x3_0->Draw("ACP");
     
     perc3->cd(1);
     perc_3x3_0RMS->SetLineWidth(2);
@@ -142,7 +148,7 @@ void grafici()
     perc_3x3_0RMS->Draw("ACP");
     
     
-    /*perc3->cd(3);
+    perc3->cd(3);
     perc_3x3_spread->SetLineWidth(2);
     perc_3x3_spread->SetMarkerStyle(8);
     perc_3x3_spread->SetMarkerSize(1.3);
@@ -152,7 +158,7 @@ void grafici()
     perc_3x3_spread->SetTitle("Percentage energy 3x3 cell (2.6,2.7)");
     perc_3x3_spread->GetXaxis()->SetTitle("E [GeV]");
     perc_3x3_spread->GetYaxis()->SetTitle("%E_reco/E_in");
-    perc_3x3_spread->Draw("ACP");*/
+    perc_3x3_spread->Draw("ACP");
     
     perc3->cd(2);
     perc_3x3_spreadRMS->SetLineWidth(2);
@@ -197,8 +203,24 @@ void grafici()
     gStyle->SetOptFit();
     sigmainv->Draw("AP");
 
-    ris->SaveAs("/Users/eugenia/desktop/EMCal2/grafici/res.png");
+    ris->SaveAs("/Users/eugenia/desktop/EMCal2/grafici/res.png");*/
+  
+    TCanvas * ris= new TCanvas("b","b",1000,100,2500,2000); 
+
+    res->SetLineWidth(2);
+    res->SetLineColor(12);
+    res->SetMarkerStyle(8);
+    res->SetMarkerSize(1.3);
+    res->SetMarkerColor(46);
+    res->SetTitle("Delta_r(E)");
+    res->GetXaxis()->SetTitle("E [GeV]");
+    res->GetYaxis()->SetTitle("Delta_r [mm]");
+    res->Fit("f1", "R");
+    gStyle->SetOptFit();
+    res->Draw("AP");
+
     
+    ris->SaveAs("/Users/eugenia/desktop/EMCal2/grafici/resDR.png");
     
 
 

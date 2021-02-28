@@ -89,11 +89,14 @@ TH2F* EcalGrid;
 TH1F* E_sigma_tot;
 TH1F* E_sigma_2;
 TH1F* E_sigma_4;
+TH2F* Emean_out;
 TProfile* En_r1x1;
 TProfile* En_r3x3;
 TProfile* En_N3x3;
 
 TH1F* residual;
+TH1F* residuoX;
+TH1F* residuoY;
 
  TH2F* X_Y_e;
 
